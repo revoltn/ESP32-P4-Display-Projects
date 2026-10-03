@@ -1,0 +1,12 @@
+# Name,   Type, SubType, Offset,  Size, Flags
+nvs,      data, nvs,     0xb000,  0x6000,
+phy_init, data, phy,     0x11000, 0x1000,
+# 8M: esp-dl inference kernels (esp-sr dep) alone add ~1.6M of .text
+factory,  app,  factory, 0x20000, 8M,
+# esp-sr models (wn9_hiesp + mn7_en, ~2.9M). Label MUST be "model"; written
+# only by a full `idf.py flash` - `idf.py app-flash` leaves it stale/empty.
+model,    data, spiffs,  0x820000, 4M,
+# Post-mortem: ELF core dump of the last panic (CONFIG_ESP_COREDUMP_ENABLE_TO_FLASH).
+# Appended AFTER model so no existing offset moved - only the table needs
+# re-flashing. Read with `idf.py coredump-info`.
+coredump, data, coredump, 0xC20000, 128K,

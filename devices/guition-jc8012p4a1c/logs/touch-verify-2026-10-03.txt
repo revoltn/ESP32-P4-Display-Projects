@@ -1,0 +1,684 @@
+﻿I (352) esp_image: segment 1: paddr=00235590 vaddr=30100000 size=00070h (   112) load
+
+I (353) esp_image: segment 2: paddr=00235608 vaddr=4ff00000 size=0aa10h ( 43536) load
+
+I (362) esp_image: segment 3: paddr=00240020 vaddr=48000020 size=3970e0h (3764448) map
+
+I (784) esp_image: segment 4: paddr=005d7108 vaddr=4ff0aa10 size=0ed2ch ( 60716) load
+
+I (794) esp_image: segment 5: paddr=005e5e3c vaddr=4ff19780 size=088d8h ( 35032) load
+
+I (800) esp_image: segment 6: paddr=005ee71c vaddr=50108080 size=00020h (    32) load
+
+I (808) boot: Loaded app from partition at offset 0x20000
+
+I (808) boot: Disabling RNG early entropy source...
+
+I (821) hex_psram: vendor id    : 0x0d (AP)
+
+I (821) hex_psram: Latency      : 0x01 (Fixed)
+
+I (822) hex_psram: DriveStr.    : 0x00 (25 Ohm)
+
+I (822) hex_psram: dev id       : 0x03 (generation 4)
+
+I (827) hex_psram: density      : 0x07 (256 Mbit)
+
+I (831) hex_psram: good-die     : 0x06 (Pass)
+
+I (835) hex_psram: SRF          : 0x02 (Slow Refresh)
+
+I (840) hex_psram: BurstType    : 0x00 ( Wrap)
+
+I (844) hex_psram: BurstLen     : 0x03 (2048 Byte)
+
+I (848) hex_psram: BitMode      : 0x01 (X16 Mode)
+
+I (853) hex_psram: Readlatency  : 0x04 (14 cycles@Fixed)
+
+I (858) hex_psram: DriveStrength: 0x00 (1/1)
+
+I (862) MSPI Timing: Enter psram timing tuning
+
+I esp_psram: Found 32MB PSRAM device
+
+I esp_psram: Speed: 200MHz
+
+I (1139) mmu_psram: .rodata xip on psram
+
+I (1318) mmu_psram: .text xip on psram
+
+I (1319) hex_psram: psram CS IO is dedicated
+
+I (1319) cpu_start: Multicore app
+
+I (1329) cpu_start: GPIO 38 and 37 are used as console UART I/O pins
+
+I (1329) cpu_start: Pro cpu start user code
+
+I (1329) cpu_start: cpu freq: 360000000 Hz
+
+I (1331) app_init: Application information:
+
+I (1335) app_init: Project name:     bedside_clock
+
+I (1340) app_init: App version:      0ea757f-dirty
+
+I (1344) app_init: Compile time:     Oct  3 2026 11:03:42
+
+I (1349) app_init: ELF file SHA256:  8850d24c1...
+
+I (1354) app_init: ESP-IDF:          v5.5.5
+
+I (1358) efuse_init: Min chip rev:     v1.0
+
+I (1362) efuse_init: Max chip rev:     v1.99 
+
+I (1366) efuse_init: Chip rev:         v1.3
+
+I (1370) heap_init: Initializing. RAM available for dynamic allocation:
+
+I (1376) heap_init: At 4FF2AD20 len 000102A0 (64 KiB): RETENT_RAM
+
+I (1382) heap_init: At 4FF3AFC0 len 00004BF0 (18 KiB): RAM
+
+I (1387) heap_init: At 4FF41100 len 0003EF00 (251 KiB): RAM
+
+I (1392) heap_init: At 501080A0 len 00007F60 (31 KiB): RTCRAM
+
+I (1398) heap_init: At 30100070 len 00001F90 (7 KiB): SPM
+
+I (1403) esp_psram: Adding pool of 26852K of PSRAM memory to heap allocator
+
+I (1409) esp_psram: Adding pool of 35K of PSRAM memory gap generated due to end address alignment of irom to the heap allocator
+
+I (1421) esp_psram: Adding pool of 42K of PSRAM memory gap generated due to end address alignment of drom to the heap allocator
+
+W (1432) spi_flash: Detected boya flash chip but using generic driver. For optimal functionality, enable `SPI_FLASH_SUPPORT_BOYA_CHIP` in menuconfig
+
+I (1445) spi_flash: detected chip: generic
+
+I (1449) spi_flash: flash io: qio
+
+I (1470) sleep_gpio: Configure to isolate all GPIO pins in sleep state
+
+I (1475) sleep_gpio: Enable automatic switching of GPIO sleep configuration
+
+I (1482) esp_core_dump_flash: Init core dump to flash
+
+I (1487) esp_core_dump_flash: Found partition 'coredump' @ c20000 131072 bytes
+
+I (1494) H_SDIO_DRV: sdio_data_to_rx_buf_task started
+
+I (1499) main_task: Started on CPU0
+
+I (1502) esp_psram: Reserving pool of 64K of internal memory for DMA/internal allocations
+
+I (1510) main_task: Calling app_main()
+
+I (1515) app_main: Reset reason: USB reset
+
+I (1517) evlog: journal kept across reset (18 entries)
+
+I (1522) evlog: [boot] boot: USB reset
+
+I (1526) settings: settings loaded (v11)
+
+I (1529) clock_sync: TZ set to UTC-10:00
+
+I (1533) evlog: [time] no valid time - waiting for SNTP
+
+I (1538) LVGL: Starting LVGL task
+
+W (1541) ledc: GPIO 23 is not usable, maybe conflict with others
+
+I (1546) ESP32_P4_EV: MIPI DSI PHY Powered on
+
+I (1552) ESP32_P4_EV: Install MIPI DSI LCD control panel
+
+I (1556) ESP32_P4_EV: Install JD9365 LCD control panel (V2 table, DPI 70 MHz)
+
+I (1562) jd9365: version: 1.0.4
+
+I (1722) jd9365: LCD ID: 93 65 04
+
+I (1864) ESP32_P4_EV: Display initialized
+
+I (1865) LVGL: Setting PPA context for SW rotation
+
+W (1867) i2c.master: Please check pull-up resistances whether be connected properly. Otherwise unexpected behavior would happen. For more detailed information, please read docs
+
+I (1947) gsl3680: init gls3680
+
+I (1947) gsl3680: gsl3680 connect
+
+I (1947) gsl3680: gsl3680 read reg 0xf0 before is 0 0 0 0
+
+I (1967) gsl3680: gsl3680 writing 0xf0 0x12
+
+I (1987) gsl3680: gsl3680 read reg 0xf0 after is 12 34 56 0
+
+I (1987) gsl3680: start init
+
+I (1987) gsl3680: clear reg
+
+I (2107) gsl3680: start load fw
+
+I (2934) gsl3680: load fw success
+
+I (2934) gsl3680: enter
+
+I (2944) gsl_point_id: gsl_DataInit
+
+I (3014) gsl3680: enter
+
+I (3024) gsl_point_id: gsl_DataInit
+
+I (3024) gsl3680: enter read_ram_fw
+
+I (3054) gsl3680: gsl3680 startup_chip failed read 0xb0 = 5a,5a,5a,5a 
+
+I (3054) ESP32_P4_EV: Setting LCD backlight: 80%
+
+I (3065) ui_watch: LVGL stall detector armed (2000 ms check)
+
+Event journal (last 8 of 20):
+
+  +000000s boot: boot: USB reset
+
+  +000000s time: no valid time - waiting for SNTP
+
+  +000001s boot: usb: host up, -6500 B
+
+  +000000s boot: boot: USB reset
+
+  +000000s time: no valid time - waiting for SNTP
+
+  +000001s boot: usb: host up, -6500 B
+
+  +000000s boot: boot: USB reset
+
+  +000000s time: no valid time - waiting for SNTP
+
+I (3196) app_main: setup done
+
+I (3196) main_task: Returned from app_main()
+
+I (3226) uac-host: Install Succeed, Version: 1.5.0
+
+I (3226) ui_settings: USB audio: host up, internal RAM 293539 -> 287039 (-6500 B)
+
+I (3226) usbaudio: USB host + UAC driver installed
+
+I (3231) evlog: [boot] usb: host up, -6500 B
+
+W (3235) i2s_common: dma frame num is adjusted to 256 to align the dma buffer with 64, bufsize = 512
+
+W (3244) i2s_common: dma frame num is adjusted to 256 to align the dma buffer with 64, bufsize = 512
+
+I (3259) ES8311: Work in Slave mode
+
+I (3268) ES8311: Work in Slave mode
+
+I (3271) bsp_extra_board: rate = 44100 bits_cfg = 16 ch = 2 | internal free 278663 (largest 131072), dma free 239091 (largest 131072)
+
+I (3273) I2S_IF: STD: TX, data_bit: 16, slot_bit: 16, ws_width: 16, slot_mode: STEREO, slot_mask: 0x3
+
+I (3281) I2S_IF: STD: TX, sample_rate_hz: 44100, mclk_multiple: 256, clk_src: 0
+
+I (3288) I2S_IF: STD: RX, data_bit: 16, slot_bit: 16, ws_width: 16, slot_mode: STEREO, slot_mask: 0x3
+
+I (3297) I2S_IF: STD: RX, sample_rate_hz: 44100, mclk_multiple: 256, clk_src: 0
+
+I (3321) Adev_Codec: Open codec device OK
+
+I (3321) I2S_IF: Current mode(record) and peer mode have same sample_rate 44100, channel 2, bits_per_sample 16
+
+I (3324) I2S_IF: STD: RX, data_bit: 16, slot_bit: 16, ws_width: 16, slot_mode: STEREO, slot_mask: 0x3
+
+I (3333) I2S_IF: STD: RX, sample_rate_hz: 44100, mclk_multiple: 256, clk_src: 0
+
+I (3355) Adev_Codec: Open codec device OK
+
+I (3355) bsp_extra_board: ret = 0x0 , Success
+
+I (3555) bsp_extra_board: Setting volume: 70
+
+I (3556) ov02c10: ISP info: 1
+
+I (3557) ov02c10: Detected Camera sensor PID=0x5602
+
+I (3653) ov02c10: write_array done,array size:227
+
+I (3653) ov02c10: dgain_fine 84, dgain_coarse 0, again_coarse 1
+
+I (3654) ov02c10: set exposure 0x37e
+
+I (3656) ov02c10: id=30018 is not supported
+
+I (3659) ov02c10: id=30016 is not supported
+
+I (3664) ov02c10: set exposure 0x2c7
+
+I (3667) ov02c10: dgain_fine a4, dgain_coarse 0, again_coarse 1
+
+I (3673) app_video: version: 2.0.1
+
+I (3675) app_video: driver:  MIPI-CSI
+
+I (3678) app_video: card:    MIPI-CSI
+
+I (3682) app_video: bus:     esp32p4:MIPI-CSI
+
+I (3686) app_video: width=1288 height=728
+
+I (3691) ambient: ambient light sensing running
+
+I (3694) ui_settings: API: disabled in Settings
+
+I (3698) ui_clock: status: WiFi not configured - open settings
+
+I (3704) clock_sync: TZ set to UTC-10:00
+
+I (3707) ui_settings: Network services waiting for WiFi
+
+I (3712) usbaudio: source now 16000 Hz / 1 ch -> device 0 Hz / 0 ch
+
+I (3718) bsp_extra_board: rate = 16000 bits_cfg = 16 ch = 1 | internal free 232639 (largest 86016), dma free 193067 (largest 86016)
+
+E (3736) i2s_common: i2s_channel_disable(1262): the channel has not been enabled yet
+
+E (3738) i2s_common: i2s_channel_disable(1262): the channel has not been enabled yet
+
+E (3745) i2s_common: i2s_channel_disable(1262): the channel has not been enabled yet
+
+W (3752) i2s_common: dma frame num is adjusted to 256 to align the dma buffer with 64, bufsize = 512
+
+I (3761) I2S_IF: STD: TX, data_bit: 16, slot_bit: 16, ws_width: 16, slot_mode: MONO, slot_mask: 0x1
+
+I (3770) I2S_IF: STD: TX, sample_rate_hz: 16000, mclk_multiple: 256, clk_src: 0
+
+W (3777) i2s_common: dma frame num is adjusted to 256 to align the dma buffer with 64, bufsize = 512
+
+I (3786) I2S_IF: STD: RX, data_bit: 16, slot_bit: 16, ws_width: 16, slot_mode: MONO, slot_mask: 0x1
+
+I (3794) I2S_IF: STD: RX, sample_rate_hz: 16000, mclk_multiple: 256, clk_src: 0
+
+I (3817) Adev_Codec: Open codec device OK
+
+I (3817) I2S_IF: Current mode(record) and peer mode have same sample_rate 16000, channel 2, bits_per_sample 16
+
+W (3819) i2s_common: dma frame num is adjusted to 256 to align the dma buffer with 64, bufsize = 512
+
+I (3828) I2S_IF: STD: RX, data_bit: 16, slot_bit: 16, ws_width: 16, slot_mode: MONO, slot_mask: 0x1
+
+I (3837) I2S_IF: STD: RX, sample_rate_hz: 16000, mclk_multiple: 256, clk_src: 0
+
+I (3858) Adev_Codec: Open codec device OK
+
+I (3859) bsp_extra_board: ret = 0x0 , Success
+
+I (3859) voice: mic reclaimed: 16k mono, gain 24 dB
+
+I (4612) ui_settings: Voice self-test: 1kHz tone -0.2 dB vs control, mic rms 48 [SUSPECT]
+
+I (4612) MODEL_LOADER: The storage free size is 65536 KB
+
+I (4614) MODEL_LOADER: The partition size is 4096 KB
+
+I (4619) MODEL_LOADER: Successfully load srmodels
+
+I (4623) AFE_CONFIG: Set WakeNet Model: wn9_hiesp
+
+I (4640) wake_mww: "Hi ESP" (hi_esp): model 62304 B, arena 26080 B (used 23132), stride 3, step 10 ms, window 5
+
+I (4640) wake_mww: 2 wake word model(s) embedded, active "Hi ESP", cutoff 242/255
+
+I (4646) ui_settings: voice: wake word engine microWakeWord "Hi ESP" (arena 26080 B)
+
+I (4654) AFE: AFE Version: (1MIC_V251128)
+
+I (4657) AFE: Input PCM Config: total 1 channels(1 microphone, 0 playback), sample rate:16000
+
+I (4665) AFE: AFE Pipeline: [input] -> |VAD(WebRTC)| -> |AGC(WakeNet)| -> [output]
+
+I (4672) voice: wake cutoff 89% (slider 50%, microWakeWord "Hi ESP")
+
+Build fst from commands.
+
+Quantized MultiNet7:rnnt_ctc_2.0, name:mn7_en, (Aug 28 2026 16:40:17)
+
+Quantized MultiNet7 search method: 2, time out:6.0 s
+
+Build fst from commands.
+
+I (5514) voice: voice up: 70 phrases, feed=512, internal heap 232639 -> 193123 (delta 39516)
+
+I (5515) ui_settings: Voice: say "Hi ESP", then a command
+
+I (5517) ui_settings: bedside_clock ready
+
+I (5691) app_video: Video Stream Start
+
+I (5691) ov02c10: cmd=40004
+
+I (5692) ov02c10: Stream=1
+
+I (5836) ov02c10: set exposure 0x42a
+
+I (5837) ov02c10: dgain_fine f0, dgain_coarse 0, again_coarse 1
+
+I (5935) ov02c10: dgain_fine fc, dgain_coarse 0, again_coarse 2
+
+I (6001) app_video: Video Stream Stop
+
+I (6001) ov02c10: cmd=40004
+
+I (6002) ov02c10: Stream=0
+
+I (6003) ambient: luma 64 range [60..64] norm 64 (sq 16) -> target 14
+
+I (6005) ESP32_P4_EV: Setting LCD backlight: 14%
+
+I (13620) voice: mic alive: rms=5522 feeds=256
+
+I (13620) voice: afe alive: fetches=256 vad=1 listening=0 mww peak=0.11
+
+I (16513) ui_watch: touch PRESSED at 0,0
+
+I (17448) ui_watch: touch RELEASED at 0,0
+
+I (18359) ui_watch: touch PRESSED at 1279,0
+
+I (19347) ui_watch: touch RELEASED at 1273,0
+
+I (20409) ui_watch: touch PRESSED at 1265,785
+
+I (21191) ui_watch: touch RELEASED at 1265,786
+
+I (21812) voice: mic alive: rms=519 feeds=512
+
+I (21812) voice: afe alive: fetches=512 vad=1 listening=0 mww peak=0.00
+
+I (22004) ui_watch: touch PRESSED at 0,797
+
+I (22934) ui_watch: touch RELEASED at 0,797
+
+I (23713) ui_watch: touch PRESSED at 30,48
+
+I (23883) ui_watch: touch RELEASED at 30,48
+
+I (24794) ui_watch: touch PRESSED at 0,0
+
+I (26037) ui_watch: touch RELEASED at 0,0
+
+I (26040) app_video: Video Stream Start
+
+I (26040) ov02c10: cmd=40004
+
+I (26041) ov02c10: Stream=1
+
+I (26129) ov02c10: dgain_fine c0, dgain_coarse 0, again_coarse 5
+
+I (26228) ov02c10: dgain_fine 9c, dgain_coarse 1, again_coarse 8
+
+I (26360) app_video: Video Stream Stop
+
+I (26361) ov02c10: cmd=40004
+
+I (26362) ov02c10: Stream=0
+
+I (26362) ambient: luma 95 range [60..95] norm 255 (sq 255) -> target 80
+
+I (26365) ESP32_P4_EV: Setting LCD backlight: 47%
+
+I (26433) settings: settings saved
+
+I (27319) ui_watch: touch PRESSED at 1254,5
+
+I (28433) ESP32_P4_EV: Setting LCD backlight: 63%
+
+I (28856) ui_watch: touch RELEASED at 1254,14
+
+I (30004) voice: mic alive: rms=739 feeds=768
+
+I (30004) voice: afe alive: fetches=768 vad=1 listening=0 mww peak=0.00
+
+I (30052) ui_watch: touch PRESSED at 1250,792
+
+I (30464) ESP32_P4_EV: Setting LCD backlight: 71%
+
+I (32347) ui_watch: touch RELEASED at 1246,786
+
+I (32495) ESP32_P4_EV: Setting LCD backlight: 75%
+
+I (33074) app_main: stable for 30 s: crash counter cleared
+
+I (33505) ui_watch: touch PRESSED at 29,783
+
+I (34526) ESP32_P4_EV: Setting LCD backlight: 79%
+
+I (36411) ui_watch: touch RELEASED at 18,773
+
+I (36557) ESP32_P4_EV: Setting LCD backlight: 80%
+
+I (38196) voice: mic alive: rms=1096 feeds=1024
+
+I (38196) voice: afe alive: fetches=1024 vad=1 listening=0 mww peak=0.00
+
+I (38740) ui_watch: touch PRESSED at 0,0
+
+I (39777) ui_watch: touch RELEASED at 0,0
+
+I (40907) ui_watch: touch PRESSED at 1270,0
+
+I (41950) ui_watch: touch RELEASED at 1270,0
+
+I (42879) ui_watch: touch PRESSED at 1238,787
+
+I (44639) ui_watch: touch RELEASED at 1238,786
+
+I (45781) ui_watch: touch PRESSED at 9,786
+
+I (46388) voice: mic alive: rms=927 feeds=1280
+
+I (46388) voice: afe alive: fetches=1280 vad=1 listening=0 mww peak=0.00
+
+I (46588) app_video: Video Stream Start
+
+I (46588) ov02c10: cmd=40004
+
+I (46589) ov02c10: Stream=1
+
+I (46677) ov02c10: dgain_fine c4, dgain_coarse 1, again_coarse 8
+
+I (46776) ov02c10: dgain_fine f8, dgain_coarse 1, again_coarse 8
+
+I (46876) ov02c10: dgain_fine 9c, dgain_coarse 1, again_coarse 1f
+
+I (46908) app_video: Video Stream Stop
+
+I (46909) ov02c10: cmd=40004
+
+I (46910) ov02c10: Stream=0
+
+I (46910) ambient: luma 91 range [60..95] norm 225 (sq 198) -> target 64
+
+I (46913) ESP32_P4_EV: Setting LCD backlight: 72%
+
+I (47886) ui_watch: touch RELEASED at 8,772
+
+I (48930) ui_watch: touch PRESSED at 14,0
+
+I (48951) ESP32_P4_EV: Setting LCD backlight: 68%
+
+I (50883) ui_watch: touch RELEASED at 15,0
+
+I (50984) ESP32_P4_EV: Setting LCD backlight: 64%
+
+I (51945) ui_watch: touch PRESSED at 1273,0
+
+I (53826) ui_watch: touch RELEASED at 1271,0
+
+I (54580) voice: mic alive: rms=738 feeds=1536
+
+I (54580) voice: afe alive: fetches=1536 vad=1 listening=0 mww peak=0.00
+
+I (55037) ui_watch: touch PRESSED at 1270,796
+
+I (57175) ui_watch: touch RELEASED at 1268,794
+
+I (58280) ui_watch: touch PRESSED at 10,794
+
+I (60251) ui_watch: touch RELEASED at 10,791
+
+I (61408) ui_watch: touch PRESSED at 671,401
+
+I (62033) ui_watch: touch RELEASED at 671,401
+
+I (62772) voice: mic alive: rms=1009 feeds=1792
+
+I (62772) voice: afe alive: fetches=1792 vad=1 listening=0 mww peak=0.00
+
+I (62792) ui_watch: touch PRESSED at 964,780
+
+I (63380) ui_watch: touch RELEASED at 683,741
+
+I (63589) ui_watch: touch PRESSED at 909,744
+
+I (63675) ui_watch: touch RELEASED at 909,744
+
+I (63676) bsp_extra_board: Setting volume: 67
+
+I (63677) bsp_extra_board: Setting volume: 67
+
+I (63782) ui_watch: touch PRESSED at 801,767
+
+I (63855) ui_watch: touch RELEASED at 784,764
+
+I (63949) ui_watch: touch PRESSED at 683,756
+
+I (64043) ui_watch: touch RELEASED at 678,749
+
+I (64044) bsp_extra_board: Setting volume: 46
+
+I (64688) ui_watch: touch PRESSED at 530,748
+
+I (64754) ui_watch: touch RELEASED at 526,752
+
+I (64755) bsp_extra_board: Setting volume: 32
+
+I (64756) bsp_extra_board: Setting volume: 32
+
+I (65807) ui_watch: touch PRESSED at 0,26
+
+I (66541) ui_watch: touch RELEASED at 0,16
+
+I (67018) app_video: Video Stream Start
+
+I (67018) ov02c10: cmd=40004
+
+I (67019) ov02c10: Stream=1
+
+I (67140) ov02c10: dgain_fine 80, dgain_coarse 1, again_coarse 1f
+
+I (67239) ov02c10: dgain_fine d8, dgain_coarse 1, again_coarse 8
+
+I (67339) app_video: Video Stream Stop
+
+I (67339) ov02c10: cmd=40004
+
+I (67339) ov02c10: dgain_fine c4, dgain_coarse 1, again_coarse 8
+
+I (67340) ov02c10: Stream=0
+
+I (67342) ambient: luma 102 range [60..102] norm 255 (sq 255) -> target 80
+
+I (67349) ESP32_P4_EV: Setting LCD backlight: 72%
+
+I (67393) ui_watch: touch PRESSED at 1278,15
+
+I (68272) ui_watch: touch RELEASED at 1271,7
+
+I (69125) ui_watch: touch PRESSED at 1267,799
+
+I (69387) ESP32_P4_EV: Setting LCD backlight: 76%
+
+I (69959) ui_watch: touch RELEASED at 1267,799
+
+I (70794) ui_watch: touch PRESSED at 7,799
+
+I (70964) voice: mic alive: rms=912 feeds=2048
+
+I (70964) voice: afe alive: fetches=2048 vad=1 listening=0 mww peak=0.00
+
+I (71421) ESP32_P4_EV: Setting LCD backlight: 80%
+
+I (71496) ui_watch: touch RELEASED at 7,799
+
+I (72216) ui_watch: touch PRESSED at 666,413
+
+I (72717) ui_watch: touch RELEASED at 666,410
+
+I (79156) voice: mic alive: rms=1526 feeds=2304
+
+I (79156) voice: afe alive: fetches=2304 vad=1 listening=0 mww peak=0.00
+
+I (83801) ui_watch: touch PRESSED at 0,0
+
+I (84753) ui_watch: touch RELEASED at 0,0
+
+I (86042) ui_watch: touch PRESSED at 1279,0
+
+I (87117) ui_watch: touch RELEASED at 1278,1
+
+I (87348) voice: mic alive: rms=2355 feeds=2560
+
+I (87348) voice: afe alive: fetches=2560 vad=1 listening=0 mww peak=0.00
+
+I (87454) app_video: Video Stream Start
+
+I (87454) ov02c10: cmd=40004
+
+I (87455) ov02c10: Stream=1
+
+I (87774) app_video: Video Stream Stop
+
+I (87775) ov02c10: cmd=40004
+
+I (87776) ov02c10: Stream=0
+
+I (87776) ambient: luma 95 range [60..102] norm 212 (sq 176) -> target 58
+
+I (87779) ESP32_P4_EV: Setting LCD backlight: 69%
+
+I (88014) ui_watch: touch PRESSED at 1267,798
+
+I (89151) ui_watch: touch RELEASED at 1261,798
+
+I (89817) ESP32_P4_EV: Setting LCD backlight: 64%
+
+I (90042) ui_watch: touch PRESSED at 0,790
+
+I (91084) ui_watch: touch RELEASED at 0,790
+
+I (91850) ESP32_P4_EV: Setting LCD backlight: 60%
+
+I (92563) ui_watch: touch PRESSED at 683,451
+
+I (93372) ui_watch: touch RELEASED at 679,436
+
+I (93883) ESP32_P4_EV: Setting LCD backlight: 58%
+
+I (95540) voice: mic alive: rms=679 feeds=2816
+
+I (95540) voice: afe alive: fetches=2816 vad=1 listening=0 mww peak=0.00
+
+I (95809) ui_watch: touch PRESSED at 4,0
+
+I (96922) ui_watch: touch RELEASED at 4,0
+
+I (98159) ui_watch: touch PRESSED at 1254,6
+
+I (98956) ui_watch: touch RELEASED at 1254,4
+

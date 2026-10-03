@@ -1,0 +1,3 @@
+# Reference-kernel variant: plain ANSI C kernels instead of the P4 PIE ones.
+# Used to cross-check numerics and to measure the no-ESP-NN fallback cost.
+CONFIG_NN_ANSI_C=y

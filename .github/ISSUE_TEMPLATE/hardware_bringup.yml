@@ -1,0 +1,92 @@
+name: Hardware bring-up report
+description: A new board, a new batch or revision of a known board, or a measured fact that differs from the documentation.
+title: "[hardware] "
+labels: ["hardware", "needs-triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Use this for "I have a board you do not fully support" and for "my unit behaves differently
+        from `devices/<board>/docs`". The most valuable attachments are the factory boot log captured
+        **before** you flashed anything, and the esp_hosted `transport:` handshake block.
+        See `docs/howto/add-a-board.md` for the folder a supported board ends up with.
+  - type: input
+    id: board
+    attributes:
+      label: Board name and vendor
+      placeholder: "Guition JC8012P4A1C 10.1 inch"
+    validations:
+      required: true
+  - type: input
+    id: label
+    attributes:
+      label: Rear label text, exactly as printed, and any revision or date markings
+      placeholder: "JC8012P4A1C_I_W_Y"
+    validations:
+      required: true
+  - type: input
+    id: source
+    attributes:
+      label: Where and when it was bought
+      description: Helps correlate batches (C6 firmware and panel differences have been seen between batches).
+  - type: input
+    id: chip
+    attributes:
+      label: Chip identification
+      description: The `Chip is ...` line from `esptool.py --port COMx chip_id`.
+      placeholder: "Chip is ESP32-P4 (revision v1.3)"
+    validations:
+      required: true
+  - type: textarea
+    id: handshake
+    attributes:
+      label: esp_hosted handshake block from the boot log
+      description: "The lines from `transport: Identified slave` to the `Version mismatch` warning (if any), including `capabilities` and the feature list."
+      render: text
+    validations:
+      required: true
+  - type: textarea
+    id: factory
+    attributes:
+      label: Factory firmware boot log
+      description: "Captured before flashing: `python tools\\readcom.py COMx 30 reset`. Redact MACs and SSIDs. Attach as a file if it is long."
+      render: text
+  - type: textarea
+    id: panel
+    attributes:
+      label: Display, touch, audio and other peripherals as identified
+      description: "Panel controller and resolution (look for `Display resolution`, `LCD ID` lines), touch controller (`GT911`, `gsl3680` ...), speaker (built in or external), camera module, SD slot, anything else on the board."
+      placeholder: |
+        Panel: JD9365, 800x1280 (log: "Display resolution 800x1280", "jd9365: LCD ID: 93 65 04")
+        Touch: GSL3680 (log: "gsl3680: load fw success")
+        Speaker: built in
+        Camera: OV02C10 detected (PID=0x5602)
+  - type: textarea
+    id: works
+    attributes:
+      label: What you tried and what happened
+      description: Which firmware from this repository (if any) you flashed, with the exact command, and the result per peripheral. "Not tried" is a valid entry.
+      placeholder: |
+        Flashed: nothing yet / src/sample_hello_world at commit abc1234 with idf.py -p COM4 flash
+        Display: black / shows menu
+        Touch: ...
+        WiFi: ...
+  - type: textarea
+    id: differs
+    attributes:
+      label: Facts that differ from the documentation
+      description: Quote the document and line, then what you measured and how.
+  - type: textarea
+    id: vendor
+    attributes:
+      label: Vendor material
+      description: Links to the vendor package, schematic, or community repositories you used, with the licence if you know it. Do not attach the files themselves.
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Before submitting
+      options:
+        - label: I made a `read_flash` backup of the factory image before flashing anything (or I have not flashed anything).
+          required: true
+        - label: Secrets (WiFi, MACs) are redacted.
+          required: true

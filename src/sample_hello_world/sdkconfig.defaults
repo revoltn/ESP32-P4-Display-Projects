@@ -1,0 +1,99 @@
+CONFIG_IDF_TARGET="esp32p4"
+
+# Board chips are ESP32-P4 rev v1.x (IDF 5.5 defaults to v3.1 minimum;
+# rev <3.0 support must be selected explicitly and is exclusive with >=3.0)
+CONFIG_ESP32P4_SELECTS_REV_LESS_V3=y
+CONFIG_ESP32P4_REV_MIN_100=y
+
+# Flash
+CONFIG_ESPTOOLPY_FLASHMODE_QIO=y
+CONFIG_ESPTOOLPY_FLASHFREQ_80M=y
+CONFIG_ESPTOOLPY_FLASHSIZE_16MB=y
+CONFIG_PARTITION_TABLE_CUSTOM=y
+CONFIG_PARTITION_TABLE_CUSTOM_FILENAME="partitions.csv"
+
+# Performance
+CONFIG_COMPILER_OPTIMIZATION_PERF=y
+CONFIG_IDF_EXPERIMENTAL_FEATURES=y
+
+# PSRAM (matches proven vendor demo)
+CONFIG_SPIRAM=y
+CONFIG_SPIRAM_SPEED_200M=y
+CONFIG_SPIRAM_XIP_FROM_PSRAM=y
+CONFIG_SPIRAM_MALLOC_ALWAYSINTERNAL=4096
+CONFIG_SPIRAM_MALLOC_RESERVE_INTERNAL=65536
+CONFIG_SPIRAM_TRY_ALLOCATE_WIFI_LWIP=y
+CONFIG_SPIRAM_MEMTEST=n
+
+# Internal-RAM protection / TLS hardening (MUST-IMPLEMENT §6/§10)
+CONFIG_MBEDTLS_EXTERNAL_MEM_ALLOC=y
+CONFIG_CACHE_L2_CACHE_256KB=y
+CONFIG_CACHE_L2_CACHE_LINE_128B=y
+
+# System
+CONFIG_ESP_MAIN_TASK_STACK_SIZE=8192
+CONFIG_ESP_SYSTEM_EVENT_TASK_STACK_SIZE=4096
+CONFIG_FREERTOS_HZ=1000
+
+# BSP / display: 480x800 ST7701 rides the vendor-repurposed 1024_600 branch — keep
+CONFIG_BSP_LCD_TYPE_1024_600=y
+CONFIG_BSP_LCD_COLOR_FORMAT_RGB565=y
+CONFIG_BSP_LCD_DPI_BUFFER_NUMS=2
+CONFIG_BSP_DISPLAY_LVGL_AVOID_TEAR=y
+CONFIG_BSP_DISPLAY_LVGL_DIRECT_MODE=y
+
+# LVGL fonts used by the UI
+CONFIG_LV_FONT_MONTSERRAT_16=y
+CONFIG_LV_FONT_MONTSERRAT_20=y
+CONFIG_LV_FONT_MONTSERRAT_24=y
+CONFIG_LV_FONT_MONTSERRAT_28=y
+CONFIG_LV_FONT_MONTSERRAT_48=y
+
+# esp_hosted SDIO link to the ESP32-C6 (pins derive from the board choice:
+# CMD=19 CLK=18 D0=14 D1=15 D2=16 D3=17, reset GPIO54)
+CONFIG_ESP_HOSTED_ENABLED=y
+CONFIG_ESP_HOSTED_P4_DEV_BOARD_FUNC_BOARD=y
+CONFIG_ESP_HOSTED_SDIO_HOST_INTERFACE=y
+CONFIG_ESP_HOSTED_SDIO_SLOT_1=y
+CONFIG_ESP_HOSTED_SDIO_4_BIT_BUS=y
+CONFIG_ESP_HOSTED_SDIO_CLOCK_FREQ_KHZ=40000
+CONFIG_ESP_HOSTED_SDIO_GPIO_RESET_SLAVE=54
+CONFIG_ESP_HOSTED_SDIO_RESET_ACTIVE_HIGH=y
+# Hosted memory discipline for P4 + LVGL builds (MUST-IMPLEMENT §4):
+# mempool from PSRAM and hosted task stacks from SPIRAM, else boot-time
+# "HS_MP: mempool create failed: no mem" once the UI has eaten internal RAM.
+# NOTE: PSRAM pool needs the local hosted_malloc_align patch (128B L2-line
+# alignment) in managed_components/espressif__esp_hosted, else sustained
+# SDIO traffic hits "Unrecoverable host sdio state" reboots.
+CONFIG_ESP_HOSTED_MEMPOOL_PREFER_SPIRAM=y
+CONFIG_ESP_HOSTED_DFLT_TASK_FROM_SPIRAM=y
+
+# esp_wifi_remote buffers (from vendor demo)
+CONFIG_WIFI_RMT_STATIC_RX_BUFFER_NUM=10
+CONFIG_WIFI_RMT_RX_BA_WIN=6
+
+# --- M5 Bluetooth attempt (revertable block) ---
+# NimBLE host on the P4, no local controller; HCI tunneled to the C6
+# by esp_hosted over the same SDIO transport (vHCI).
+CONFIG_BT_ENABLED=y
+CONFIG_BT_NIMBLE_ENABLED=y
+CONFIG_BT_CONTROLLER_DISABLED=y
+CONFIG_BT_NIMBLE_TRANSPORT_UART=n
+CONFIG_ESP_HOSTED_ENABLE_BT_NIMBLE=y
+CONFIG_ESP_HOSTED_NIMBLE_HCI_VHCI=y
+# NimBLE allocations from PSRAM — frees internal RAM alongside the DSI
+# framebuffer (MUST-IMPLEMENT §5)
+CONFIG_BT_NIMBLE_MEM_ALLOC_MODE_EXTERNAL=y
+
+# USB host: enumerate devices behind an external hub (USB Audio feature
+# with the Jabra on a powered hub off the HS Type-C port)
+CONFIG_USB_HOST_HUBS_SUPPORTED=y
+
+# Camera: OV02C10 on MIPI-CSI (vendor-proven 1-lane FHD mode; needs the local
+# esp_cam_sensor 2.1.0 component override — managed 2.0.1 lacks this driver)
+CONFIG_CAMERA_OV02C10=y
+CONFIG_CAMERA_OV02C10_MIPI_RAW10_1920X1080_30FPS_1_LANE=y
+CONFIG_CAMERA_OV02C10_MIPI_DEFAULT_FMT_RAW10_1920X1080_30FPS_1_LANE=y
+# ISP pipeline controller (AE/AWB isp_task) — without it RAW10→RGB565 frames
+# come out dark/green
+CONFIG_ESP_VIDEO_ENABLE_ISP_PIPELINE_CONTROLLER=y

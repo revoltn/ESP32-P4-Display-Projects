@@ -1,0 +1,114 @@
+name: Bug report
+description: Something documented as working does not work on your board.
+title: "[bug] "
+labels: ["bug", "needs-triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for the report. The items below are what a maintainer needs to reproduce or
+        explain the problem; see `docs/reporting-issues.md` for how to collect and redact them.
+        Replace WiFi names, passwords, API keys and MAC addresses with placeholders before pasting.
+  - type: dropdown
+    id: board
+    attributes:
+      label: Board
+      options:
+        - Guition JC4880P443C (4.3", 480x800)
+        - Guition JC8012P4A1C (10.1", 800x1280)
+        - Other (describe below)
+    validations:
+      required: true
+  - type: input
+    id: label
+    attributes:
+      label: Rear label text and revision markings
+      placeholder: "JC4880P443C_I_W, module JC-ESP32P4-M3"
+    validations:
+      required: true
+  - type: input
+    id: chip
+    attributes:
+      label: Chip identification
+      description: The `Chip is ...` line from `esptool.py --port COMx chip_id`.
+      placeholder: "Chip is ESP32-P4 (revision v1.3)"
+    validations:
+      required: true
+  - type: input
+    id: c6
+    attributes:
+      label: C6 slave version from the boot log
+      description: "The `transport:` handshake block prints it, or the clock logs `C6 co-processor: esp_hosted X.Y.Z`."
+      placeholder: "2.12.12"
+  - type: dropdown
+    id: app
+    attributes:
+      label: Firmware
+      options:
+        - src/bedside_clock (default build)
+        - src/bedside_clock (build_mww variant)
+        - src/sample_hello_world
+        - src/sample_wakeword_bench
+        - Factory firmware
+        - Own firmware based on this repository
+    validations:
+      required: true
+  - type: input
+    id: idf
+    attributes:
+      label: ESP-IDF version and host OS
+      placeholder: "v5.5.5, Windows 11 / PowerShell 7"
+    validations:
+      required: true
+  - type: input
+    id: commit
+    attributes:
+      label: Repository commit
+      description: Output of `git rev-parse --short HEAD`, plus `git status --short` if you have local changes.
+    validations:
+      required: true
+  - type: textarea
+    id: command
+    attributes:
+      label: Exact build and flash commands
+      description: Including `-B`, `-D SDKCONFIG=...`, `-D SDKCONFIG_DEFAULTS=...` and any local overlay (contents with secrets removed).
+      render: powershell
+    validations:
+      required: true
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened, and what you expected
+      description: One paragraph each. Include the step-by-step actions and timing if the problem is intermittent.
+    validations:
+      required: true
+  - type: textarea
+    id: log
+    attributes:
+      label: Serial log from reset
+      description: "`python tools\\readcom.py COMx 20 reset` from an exported IDF shell, or `idf.py monitor` output. Keep the esp_hosted `transport:` block and the reset reason. Redact SSIDs and MACs."
+      render: text
+    validations:
+      required: true
+  - type: textarea
+    id: device
+    attributes:
+      label: Device-side evidence (bedside_clock)
+      description: "`GET /api/v1/events`, `GET /api/v1/log`, the `heap` object from `GET /api/v1/status`, and `idf.py coredump-info` output if the device reported a stored dump."
+      render: text
+  - type: textarea
+    id: media
+    attributes:
+      label: Photo or video
+      description: Drag an image or short video here for display, touch or rotation problems.
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Before submitting
+      options:
+        - label: I read the "Benign log lines" table in `docs/troubleshooting.md` and this is not one of them.
+          required: true
+        - label: I searched existing issues.
+          required: true
+        - label: Secrets (WiFi, API key, server credentials, MACs) are redacted.
+          required: true

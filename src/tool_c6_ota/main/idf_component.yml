@@ -1,0 +1,7 @@
+dependencies:
+  idf: ">=5.5.5"
+  # The same host library bedside_clock links (2.12.12 + local hosted_malloc_align patch),
+  # so this tool talks to the C6 exactly the way the clock will afterwards.
+  espressif/esp_hosted:
+    path: ../../bedside_clock/components/espressif__esp_hosted
+  espressif/esp_wifi_remote: "*"

@@ -1,0 +1,100 @@
+﻿I (125231) voice: mic alive: rms=646 feeds=3584
+
+I (125231) voice: afe alive: fetches=3584 vad=0 listening=0 mww peak=0.00
+
+I (128453) app_video: Video Stream Start
+
+I (128453) ov02c10: cmd=40004
+
+I (128454) ov02c10: Stream=1
+
+I (128774) app_video: Video Stream Stop
+
+I (128774) ov02c10: cmd=40004
+
+I (128775) ov02c10: Stream=0
+
+I (128786) ambient: luma 127 range [60..127] norm 255 (sq 255) -> target 69
+
+I (128786) ESP32_P4_EV: Setting LCD backlight: 69%
+
+I (133423) voice: mic alive: rms=650 feeds=3840
+
+I (133423) voice: afe alive: fetches=3840 vad=0 listening=0 mww peak=0.00
+
+I (141615) voice: mic alive: rms=617 feeds=4096
+
+I (141615) voice: afe alive: fetches=4096 vad=0 listening=0 mww peak=0.00
+
+I (148845) app_video: Video Stream Start
+
+I (148845) ov02c10: cmd=40004
+
+I (148846) ov02c10: Stream=1
+
+I (149166) app_video: Video Stream Stop
+
+I (149166) ov02c10: cmd=40004
+
+I (149169) ov02c10: Stream=0
+
+I (149169) ambient: luma 126 range [60..127] norm 251 (sq 247) -> target 67
+
+I (149170) ESP32_P4_EV: Setting LCD backlight: 67%
+
+I (149807) voice: mic alive: rms=871 feeds=4352
+
+I (149807) voice: afe alive: fetches=4352 vad=0 listening=0 mww peak=0.00
+
+I (157999) voice: mic alive: rms=703 feeds=4608
+
+I (157999) voice: afe alive: fetches=4608 vad=0 listening=0 mww peak=0.00
+
+I (166191) voice: mic alive: rms=755 feeds=4864
+
+I (166191) voice: afe alive: fetches=4864 vad=1 listening=0 mww peak=0.00
+
+I (169185) app_video: Video Stream Start
+
+I (169185) ov02c10: cmd=40004
+
+I (169186) ov02c10: Stream=1
+
+I (169506) app_video: Video Stream Stop
+
+I (169506) ov02c10: cmd=40004
+
+I (169507) ov02c10: Stream=0
+
+I (174383) voice: mic alive: rms=1039 feeds=5120
+
+I (174383) voice: afe alive: fetches=5120 vad=1 listening=0 mww peak=0.00
+
+I (182575) voice: mic alive: rms=639 feeds=5376
+
+I (182575) voice: afe alive: fetches=5376 vad=0 listening=0 mww peak=0.00
+
+I (189507) app_video: Video Stream Start
+
+I (189507) ov02c10: cmd=40004
+
+I (189508) ov02c10: Stream=1
+
+I (189827) app_video: Video Stream Stop
+
+I (189828) ov02c10: cmd=40004
+
+I (189829) ov02c10: Stream=0
+
+I (190767) voice: mic alive: rms=634 feeds=5632
+
+I (190767) voice: afe alive: fetches=5632 vad=0 listening=0 mww peak=0.00
+
+I (198959) voice: mic alive: rms=670 feeds=5888
+
+I (198959) voice: afe alive: fetches=5888 vad=1 listening=0 mww peak=0.00
+
+I (207151) voice: mic alive: rms=656 feeds=6144
+
+I (207151) voice: afe alive: fetches=6144 vad=1 listening=0 mww peak=0.00
+

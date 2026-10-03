@@ -1,0 +1,6 @@
+cmake_minimum_required(VERSION 3.5)
+# Windows long-path guard (same as vendor demo)
+set(CMAKE_OBJECT_PATH_MAX 512)
+include($ENV{IDF_PATH}/tools/cmake/project.cmake)
+add_compile_options(-Wno-format -Wno-unused-variable)
+project(sample_hello_world)

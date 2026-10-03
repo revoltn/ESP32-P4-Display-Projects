@@ -1,0 +1,4 @@
+# A/B variant: wake word via the embedded microWakeWord model (see
+# main/Kconfig.projbuild). Layered on top of sdkconfig.defaults:
+#   idf.py -B build_mww -D SDKCONFIG=sdkconfig.mww -D "SDKCONFIG_DEFAULTS=sdkconfig.defaults;sdkconfig.mww.defaults" build
+CONFIG_BEDSIDE_WAKE_MWW=y

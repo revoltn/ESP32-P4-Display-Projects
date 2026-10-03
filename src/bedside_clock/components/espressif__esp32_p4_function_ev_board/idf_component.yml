@@ -1,0 +1,42 @@
+dependencies:
+  esp_codec_dev:
+    public: true
+    version: ~1.5
+  esp_lcd_ek79007: '>=2.0.1,<3.0.0'
+  esp_lcd_st7701: 
+    path: ../espressif__esp_lcd_st7701
+  # MODIFIED 2026-10-03 (bedside_clock): the 1280x800 branch drives the Guition 10.1"
+  # JD9365 panel with a GSL3680 touch controller (was ili9881c + gt911 only).
+  espressif/esp_lcd_jd9365:
+    version: '^1.0.2'
+  # GPL-2.0-or-later, registry only, never vendored; only called under
+  # CONFIG_BSP_LCD_TYPE_1280_800 (unreferenced objects are not linked into 4.3" images).
+  mangoo1/esp_lcd_touch_gsl3680:
+    version: '^1.0.0'
+  esp_lcd_touch_gt911:
+    version: ^1
+  esp_video:
+    public: true
+    version: ~2.0
+  espressif/esp_lcd_lt8912b:
+    version: '>=0.1.3,<1.0.0'
+  espressif/esp_lvgl_port:
+    public: true
+    version: ^2
+  idf: '>=5.4'
+  lvgl/lvgl: '>=8,<10'
+  usb:
+    public: true
+    rules:
+    - if: idf_version >=6.0
+    version: ^1.0.0
+description: Board Support Package (BSP) for ESP32-P4 Function EV Board (preview)
+repository: git://github.com/espressif/esp-bsp.git
+repository_info:
+  commit_sha: 4b3f542031dfe2a0b955517f804a99734f2cf8bb
+tags:
+- bsp
+targets:
+- esp32p4
+url: https://github.com/espressif/esp-bsp/tree/master/bsp/esp32_p4_function_ev_board
+version: 5.2.3

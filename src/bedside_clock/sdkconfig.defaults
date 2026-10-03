@@ -1,0 +1,174 @@
+CONFIG_IDF_TARGET="esp32p4"
+
+# Board chips are ESP32-P4 rev v1.x (IDF 5.5 defaults to v3.1 minimum;
+# rev <3.0 support must be selected explicitly and is exclusive with >=3.0)
+CONFIG_ESP32P4_SELECTS_REV_LESS_V3=y
+CONFIG_ESP32P4_REV_MIN_100=y
+
+# Flash
+CONFIG_ESPTOOLPY_FLASHMODE_QIO=y
+CONFIG_ESPTOOLPY_FLASHFREQ_80M=y
+CONFIG_ESPTOOLPY_FLASHSIZE_16MB=y
+CONFIG_PARTITION_TABLE_CUSTOM=y
+CONFIG_PARTITION_TABLE_CUSTOM_FILENAME="partitions.csv"
+
+# Performance
+CONFIG_COMPILER_OPTIMIZATION_PERF=y
+CONFIG_IDF_EXPERIMENTAL_FEATURES=y
+
+# PSRAM (matches proven vendor demo)
+CONFIG_SPIRAM=y
+CONFIG_SPIRAM_SPEED_200M=y
+CONFIG_SPIRAM_XIP_FROM_PSRAM=y
+CONFIG_SPIRAM_MALLOC_ALWAYSINTERNAL=4096
+CONFIG_SPIRAM_MALLOC_RESERVE_INTERNAL=65536
+CONFIG_SPIRAM_TRY_ALLOCATE_WIFI_LWIP=y
+CONFIG_SPIRAM_MEMTEST=n
+
+# Internal-RAM protection / TLS hardening (MUST-IMPLEMENT §6/§10)
+CONFIG_MBEDTLS_EXTERNAL_MEM_ALLOC=y
+# SOFTWARE AES - deliberate (2026-09-02, root cause of the field bug
+# "Navidrome: stream read error"). With hardware AES, sustained TLS downloads
+# (Navidrome song streaming, 2-3 MB/s) failed every 0.2-5 MB with mbedTLS
+# -0x7180 "Verification of the message MAC failed" although lwIP's TCP
+# checksum (always verified) had accepted every segment: the AES-DMA engine
+# decrypting mbedTLS's PSRAM-resident record buffer (EXTERNAL_MEM_ALLOC) on
+# the P4 returns wrong plaintext under load. Bisected on hardware: SDIO
+# 20 MHz, LWIP_L2_TO_L3_COPY, PPA off did not fix it; software AES = 0
+# errors in 26 MB. IDF v5.5.5 (2026-07-16) already contains Espressif's Jan
+# 2026 AES-DMA cache-coherency fixes (525ef3a, 0742f3f), so this is a still-
+# open upstream bug; re-test with hardware AES on each IDF upgrade
+# (components/mbedtls/port/aes/dma/esp_aes_dma_core.c). Cost: ~0.6 MB/s TLS
+# throughput, 40x what 128 kbps playback needs. HARDWARE_GCM follows AES.
+CONFIG_MBEDTLS_HARDWARE_AES=n
+CONFIG_CACHE_L2_CACHE_256KB=y
+CONFIG_CACHE_L2_CACHE_LINE_128B=y
+
+# System
+CONFIG_ESP_MAIN_TASK_STACK_SIZE=8192
+CONFIG_ESP_SYSTEM_EVENT_TASK_STACK_SIZE=4096
+CONFIG_FREERTOS_HZ=1000
+# Task watchdog sized for the slowest legitimate operation (MUST-IMPLEMENT
+# §2): the IDF default of 5 s can fire while the blocking esp_hosted/esp_wifi
+# RPCs bring up the C6 link on a slow panel. Only the idle tasks are
+# subscribed, so this bounds "idle starved for 60 s", not a single hung task.
+# The alarm and ambient tasks additionally subscribe themselves (alarm.c,
+# ambient.c). PANIC=y turns a trip into a reboot (reason ESP_RST_TASK_WDT,
+# counted by the crash-loop breaker); without it the watchdog only printed.
+CONFIG_ESP_TASK_WDT_TIMEOUT_S=60
+CONFIG_ESP_TASK_WDT_PANIC=y
+# Post-mortem: ELF core dump to the `coredump` partition (partitions.csv);
+# app_main logs "crash dump stored" at boot when one is present.
+CONFIG_ESP_COREDUMP_ENABLE_TO_FLASH=y
+CONFIG_ESP_COREDUMP_DATA_FORMAT_ELF=y
+CONFIG_ESP_COREDUMP_CHECKSUM_CRC32=y
+# Internal RAM is the scarce resource: variables tagged EXT_RAM_BSS_ATTR
+# (16 KB device log buffer, 8 KB stream chunk) go to PSRAM.
+CONFIG_SPIRAM_ALLOW_BSS_SEG_EXTERNAL_MEMORY=y
+# ui_watch.c: when the LVGL heartbeat stalls, dump per-task CPU time and
+# state (vTaskGetRunTimeStats) so a frozen UI names its culprit in the log.
+CONFIG_FREERTOS_USE_TRACE_FACILITY=y
+CONFIG_FREERTOS_USE_STATS_FORMATTING_FUNCTIONS=y
+CONFIG_FREERTOS_GENERATE_RUN_TIME_STATS=y
+
+# BSP / display: 480x800 ST7701 rides the vendor-repurposed 1024_600 branch — keep
+CONFIG_BSP_LCD_TYPE_1024_600=y
+CONFIG_BSP_LCD_COLOR_FORMAT_RGB565=y
+CONFIG_BSP_LCD_DPI_BUFFER_NUMS=2
+# Tear-avoidance/direct mode is OFF here (unlike sample_hello_world): it blocks
+# esp_lvgl_port software rotation, which the landscape orientation needs.
+# The bedside UI has no camera preview, so tearing is a non-issue.
+# CONFIG_BSP_DISPLAY_LVGL_AVOID_TEAR is not set
+# PPA hardware offload for the rotation blit (P4) - big scroll-smoothness win
+# (ruled out as the TLS-corruption source 2026-09-02: same failure rate off)
+CONFIG_LVGL_PORT_ENABLE_PPA=y
+
+# LVGL fonts used by the UI
+CONFIG_LV_FONT_MONTSERRAT_16=y
+CONFIG_LV_FONT_MONTSERRAT_20=y
+CONFIG_LV_FONT_MONTSERRAT_24=y
+CONFIG_LV_FONT_MONTSERRAT_28=y
+CONFIG_LV_FONT_MONTSERRAT_48=y
+CONFIG_LV_FONT_FMT_TXT_LARGE=y
+# LVGL heap = system malloc: glyph draw buffers for the 430px clock digits are ~81KB
+# (too big for the 64KB builtin pool; SPIRAM_USE_MALLOC sends them to PSRAM)
+CONFIG_LV_USE_CLIB_MALLOC=y
+
+# esp_hosted SDIO link to the ESP32-C6 (pins derive from the board choice:
+# CMD=19 CLK=18 D0=14 D1=15 D2=16 D3=17, reset GPIO54)
+CONFIG_ESP_HOSTED_ENABLED=y
+CONFIG_ESP_HOSTED_P4_DEV_BOARD_FUNC_BOARD=y
+CONFIG_ESP_HOSTED_SDIO_HOST_INTERFACE=y
+CONFIG_ESP_HOSTED_SDIO_SLOT_1=y
+CONFIG_ESP_HOSTED_SDIO_4_BIT_BUS=y
+# 20 MHz, not 40 (MUST-IMPLEMENT §4; EspControl ships 20 MHz on this exact
+# board "for reliable communication across production panels"). Switched
+# 2026-09-02 while bisecting the TLS MAC failures: it cut their rate ~10x
+# (less bus contention for the AES-DMA) but was NOT the root cause - see the
+# MBEDTLS_HARDWARE_AES note. Streaming throughput was unaffected (2-3 MB/s
+# at both clocks), so the conservative value stays.
+CONFIG_ESP_HOSTED_SDIO_CLOCK_FREQ_KHZ=20000
+CONFIG_ESP_HOSTED_SDIO_GPIO_RESET_SLAVE=54
+CONFIG_ESP_HOSTED_SDIO_RESET_ACTIVE_HIGH=y
+# Hosted memory discipline for P4 + LVGL builds (MUST-IMPLEMENT §4):
+# mempool from PSRAM and hosted task stacks from SPIRAM, else boot-time
+# "HS_MP: mempool create failed: no mem" once the UI has eaten internal RAM.
+# NOTE: PSRAM pool needs the local hosted_malloc_align patch (128B L2-line
+# alignment) in components/espressif__esp_hosted, else sustained
+# SDIO traffic hits "Unrecoverable host sdio state" reboots.
+CONFIG_ESP_HOSTED_MEMPOOL_PREFER_SPIRAM=y
+CONFIG_ESP_HOSTED_DFLT_TASK_FROM_SPIRAM=y
+
+# esp_wifi_remote buffers (from vendor demo)
+CONFIG_WIFI_RMT_STATIC_RX_BUFFER_NUM=10
+CONFIG_WIFI_RMT_RX_BA_WIN=6
+
+# Music-streaming latency/throughput (2026-09-02 review):
+# - TLS session tickets: resume Navidrome/LocalAI TLS sessions instead of a
+#   full handshake per request (each nav_* call opens a fresh connection)
+# - lwIP TCP window/send buffer: the 5760 B default caps a single download
+#   stream at ~5760/RTT; song downloads are the dominant latency term.
+#   Buffers come from PSRAM (SPIRAM_TRY_ALLOCATE_WIFI_LWIP), so the cost is
+#   cheap; 32 KB window ~= 6x throughput on a 10 ms RTT LAN.
+CONFIG_ESP_TLS_CLIENT_SESSION_TICKETS=y
+# Copy every received frame out of the WiFi driver's (esp_hosted, PSRAM
+# mempool) buffer into a lwIP-owned pbuf on arrival instead of zero-copy
+# referencing it. Tried 2026-09-02 as a TLS-corruption suspect (it was not
+# the cause - see MBEDTLS_HARDWARE_AES) but KEPT: it releases hosted RX
+# buffers immediately and measurably raised free internal RAM during
+# playback from ~41 KB to ~76 KB, which is what the I2S DMA reconfigure at
+# song start needs. One memcpy per frame is negligible at 2-3 MB/s.
+CONFIG_LWIP_L2_TO_L3_COPY=y
+CONFIG_LWIP_TCP_WND_DEFAULT=32768
+CONFIG_LWIP_TCP_SND_BUF_DEFAULT=16384
+CONFIG_LWIP_TCP_RECVMBOX_SIZE=32
+
+# Bluetooth: OFF. Nothing in main/ ever initialised NimBLE, and the C6's BT
+# controller only runs when the host enables it (esp_hosted_bt_controller_
+# enable), which this app never did - so this only drops the dead NimBLE host
+# + vHCI glue from the P4 image. No C6 reflash involved. The working BLE
+# recipe, should it ever be wanted, is in docs/04-bluetooth.md.
+CONFIG_BT_ENABLED=n
+CONFIG_ESP_HOSTED_ENABLE_BT_NIMBLE=n
+
+# USB host: enumerate devices behind an external hub (USB Audio feature
+# with the Jabra on a powered hub off the HS Type-C port)
+CONFIG_USB_HOST_HUBS_SUPPORTED=y
+
+# Camera: OV02C10 on MIPI-CSI (needs the local esp_cam_sensor 2.1.0 component
+# override — managed 2.0.1 lacks this driver). The camera is only a light
+# sensor in this app, so use the smallest mode (1288x728): the two RGB565
+# frame buffers then cost ~3.6 MB PSRAM instead of ~8.3 MB at 1920x1080.
+CONFIG_CAMERA_OV02C10=y
+CONFIG_CAMERA_OV02C10_MIPI_RAW10_1288X728_30FPS=y
+CONFIG_CAMERA_OV02C10_MIPI_DEFAULT_FMT_RAW10_1288X728_30FPS=y
+# ISP pipeline controller (AE/AWB isp_task) — without it RAW10→RGB565 frames
+# come out dark/green
+CONFIG_ESP_VIDEO_ENABLE_ISP_PIPELINE_CONTROLLER=y
+
+# Voice control (esp-sr): WakeNet9 "Hi ESP" wake word + MultiNet7 English
+# commands, stored in the 4M "model" flash partition (written only by a FULL
+# idf.py flash - app-flash leaves it stale). P4 rev v1.3 uses the component's
+# esp32p4_less_v3 libs (selected automatically via ESP32P4_SELECTS_REV_LESS_V3).
+CONFIG_SR_WN_WN9_HIESP=y
+CONFIG_SR_MN_EN_MULTINET7_QUANT=y

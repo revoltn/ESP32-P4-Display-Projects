@@ -1,0 +1,11 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Documentation index
+    url: https://github.com/revoltn/ESP32-P4-Function-EV-Board/blob/main/docs/README.md
+    about: Start here. Getting started, troubleshooting (with the benign log lines), how-tos, learnings.
+  - name: Troubleshooting
+    url: https://github.com/revoltn/ESP32-P4-Function-EV-Board/blob/main/docs/troubleshooting.md
+    about: Symptom to cause to fix, by stage, with exact log text. Check it before opening a bug.
+  - name: Questions and ideas
+    url: https://github.com/revoltn/ESP32-P4-Function-EV-Board/discussions
+    about: Anything that is not a reproducible bug, a hardware report or a concrete feature request.

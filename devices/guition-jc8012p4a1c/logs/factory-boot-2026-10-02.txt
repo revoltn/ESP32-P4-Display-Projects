@@ -1,0 +1,190 @@
+﻿I (561) esp_image: segment 1: paddr=003fe64c vaddr=30100000 size=00068h (   104) load
+I (563) esp_image: segment 2: paddr=003fe6bc vaddr=4ff00000 size=0195ch (  6492) load
+I (567) esp_image: segment 3: paddr=00400020 vaddr=48000020 size=12b8e0h (1226976) map
+I (710) esp_image: segment 4: paddr=0052b908 vaddr=4ff0195c size=1a8e8h (108776) load
+I (727) esp_image: segment 5: paddr=005461f8 vaddr=4ff1c280 size=052e4h ( 21220) load
+I (731) esp_image: segment 6: paddr=0054b4e4 vaddr=50108080 size=00020h (    32) load
+I (739) boot: Loaded app from partition at offset 0x10000
+I (739) boot: Disabling RNG early entropy source...
+I (753) hex_psram: vendor id    : 0x0d (AP)
+I (754) hex_psram: Latency      : 0x01 (Fixed)
+I (754) hex_psram: DriveStr.    : 0x00 (25 Ohm)
+I (755) hex_psram: dev id       : 0x03 (generation 4)
+I (759) hex_psram: density      : 0x07 (256 Mbit)
+I (764) hex_psram: good-die     : 0x06 (Pass)
+I (768) hex_psram: SRF          : 0x02 (Slow Refresh)
+I (773) hex_psram: BurstType    : 0x00 ( Wrap)
+I (777) hex_psram: BurstLen     : 0x03 (2048 Byte)
+I (781) hex_psram: BitMode      : 0x01 (X16 Mode)
+I (786) hex_psram: Readlatency  : 0x04 (14 cycles@Fixed)
+I (791) hex_psram: DriveStrength: 0x00 (1/1)
+I (795) MSPI Timing: Enter psram timing tuning
+I esp_psram: Found 32MB PSRAM device
+I esp_psram: Speed: 200MHz
+I (1161) mmu_psram: .rodata xip on psram
+I (1220) mmu_psram: .text xip on psram
+I (1221) hex_psram: psram CS IO is dedicated
+I (1221) cpu_start: Multicore app
+I (1607) esp_psram: SPI SRAM memory test OK
+I (1616) cpu_start: GPIO 38 and 37 are used as console UART I/O pins
+I (1616) cpu_start: Pro cpu start user code
+I (1616) cpu_start: cpu freq: 360000000 Hz
+I (1618) app_init: Application information:
+I (1622) app_init: Project name:     esp_brookesia_demo
+I (1627) app_init: App version:      1.0.1
+I (1631) app_init: Compile time:     Jul  3 2026 19:41:38
+I (1636) app_init: ELF file SHA256:  b8d6d6c61...
+I (1641) app_init: ESP-IDF:          v5.5.4-dirty
+I (1645) efuse_init: Min chip rev:     v1.0
+I (1649) efuse_init: Max chip rev:     v1.99 
+I (1653) efuse_init: Chip rev:         v1.3
+I (1657) heap_init: Initializing. RAM available for dynamic allocation:
+I (1663) heap_init: At 4FF27250 len 00013D70 (79 KiB): RETENT_RAM
+I (1669) heap_init: At 4FF3AFC0 len 00004BF0 (18 KiB): RAM
+I (1674) heap_init: At 4FF40000 len 00040000 (256 KiB): RAM
+I (1680) heap_init: At 501080A0 len 00007F60 (31 KiB): RTCRAM
+I (1685) heap_init: At 30100068 len 00001F98 (7 KiB): TCM
+I (1690) esp_psram: Adding pool of 27520K of PSRAM memory to heap allocator
+I (1697) esp_psram: Adding pool of 17K of PSRAM memory gap generated due to end address alignment of irom to the heap allocator
+I (1708) esp_psram: Adding pool of 6K of PSRAM memory gap generated due to end address alignment of drom to the heap allocator
+W (1719) spi_flash: Detected boya flash chip but using generic driver. For optimal functionality, enable `SPI_FLASH_SUPPORT_BOYA_CHIP` in menuconfig
+I (1732) spi_flash: detected chip: generic
+I (1736) spi_flash: flash io: qio
+I (1757) H_SDIO_DRV: sdio_data_to_rx_buf_task started
+I (1761) main_task: Started on CPU0
+I (1765) main_task: Calling app_main()
+I (1853) ESP32_P4_EV: Partition size: total: 3848081, used: 3630464
+I (1853) main: SPIFFS mount successfully
+W (1853) ldo: The voltage value 0 is out of the recommended range [500, 2700]
+I (1858) sdmmc_periph: sdmmc_host_init: SDMMC host already initialized, skipping init flow
+E (1893) sdmmc_common: sdmmc_init_ocr: send_op_cond (1) returned 0x107
+E (1893) vfs_fat_sdmmc: sdmmc_card_init failed (0x107).
+W (1893) main: SD card mount failed (err: 0x107), continuing without SD card
+W (1900) i2c.master: Please check pull-up resistances whether be connected properly. Otherwise unexpected behavior would happen. For more detailed information, please read docs
+W (1916) i2s_common: dma frame num is adjusted to 256 to align the dma buffer with 64, bufsize = 512
+W (1925) i2s_common: dma frame num is adjusted to 256 to align the dma buffer with 64, bufsize = 512
+I (1938) ES8311: Work in Slave mode
+I (1946) ES8311: Work in Slave mode
+I (1949) I2S_IF: channel mode 0 bits:16/16 channel:2 mask:3
+I (1949) I2S_IF: STD Mode 1 bits:16/16 channel:2 sample_rate:16000 mask:3
+I (1951) I2S_IF: channel mode 0 bits:16/16 channel:2 mask:3
+I (1957) I2S_IF: STD Mode 0 bits:16/16 channel:2 sample_rate:16000 mask:3
+I (1978) Adev_Codec: Open codec device OK
+I (1978) I2S_IF: channel mode 0 bits:16/16 channel:2 mask:3
+I (1978) I2S_IF: STD Mode 0 bits:16/16 channel:2 sample_rate:16000 mask:3
+I (1996) Adev_Codec: Open codec device OK
+I (1996) LVGL: Starting LVGL task
+W (1996) ledc: GPIO 23 is not usable, maybe conflict with others
+I (1998) ESP32_P4_EV: MIPI DSI PHY Powered on
+I (2003) ESP32_P4_EV: Install MIPI DSI LCD control panel
+I (2007) ESP32_P4_EV: Install ILI9881C LCD control panel
+I (2012) jd9365: version: 1.0.2
+I (2171) jd9365: LCD ID: 93 65 04
+I (2313) ESP32_P4_EV: Display initialized
+I (2313) ESP32_P4_EV: Display resolution 800x1280
+E (2314) lcd_panel: esp_lcd_panel_swap_xy(50): swap_xy is not supported by this panel
+W (2317) gsl3680: Unable to initialize the I2C address
+I (2382) gsl3680: init gls3680
+I (2382) gsl3680: gsl3680 connect
+I (2382) gsl3680: gsl3680 read reg 0xf0 before is 0 0 0 0
+I (2402) gsl3680: gsl3680 writing 0xf0 0x12
+I (2422) gsl3680: gsl3680 read reg 0xf0 after is 12 34 56 0
+I (2422) gsl3680: start init
+I (2422) gsl3680: clear reg
+I (2552) gsl3680: start load fw
+I (3384) gsl3680: load fw success
+I (3384) gsl3680: enter
+I (3395) gsl_point_id: gsl_DataInit
+I (3455) gsl3680: enter
+I (3465) gsl_point_id: gsl_DataInit
+I (3465) gsl3680: enter read_ram_fw
+I (3495) gsl3680: gsl3680 startup_chip failed read 0xb0 = 5a,5a,5a,5a 
+I (3495) ESP32_P4_EV: Setting LCD backlight: 100%
+[WARN] [esp_brookesia_core.cpp:46](getDisplaySize): Display is not set, use default display
+[INFO] [esp_brookesia_core.cpp:204](beginCore): Library version: 0.4.1
+[WARN] [esp_brookesia_phone_manager.cpp:72](begin): No touch device is set, try to use default touch device
+[WARN] [esp_brookesia_phone_manager.cpp:76](begin): Using default touch device(@0x0x4851fe5c)
+I (3595) file_iterator: File : BGM 1.mp3
+I (3601) file_iterator: File : Waka Waka.mp3
+I (3611) file_iterator: File : For Elise.mp3
+I (3617) file_iterator: File : Something.mp3
+I (3623) file_iterator: File : BGM 2.mp3
+I (3624) EUI_Setting: Load ble_en: 0
+I (3624) EUI_Setting: Load brightness: 95
+I (3624) EUI_Setting: Load volume: 60
+I (3626) EUI_Setting: Load wifi_en: 1
+I (3629) bsp_extra_board: Setting volume: 60
+I (3633) ESP32_P4_EV: Setting LCD backlight: 95%
+I (3638) transport: Attempt connection with slave: retry[0]
+W (3643) H_SDIO_DRV: Reset slave using GPIO[54]
+I (3647) os_wrapper_esp: GPIO [54] configured
+I (3728) file_iterator: File : good.mp3
+I (3729) file_iterator: File : weak.mp3
+I (3729) file_iterator: File : excellent.mp3
+I (3729) file_iterator: File : normal.mp3
+I (3732) Game2048: Load score: 0
+I (3736) ov02c10: ISP info: 1
+I (3739) ov02c10: Detected Camera sensor PID=0x5602
+I (3837) ov02c10: write_array done,array size:227
+I (3837) ov02c10: dgain_fine 84, dgain_coarse 0, again_coarse 1
+I (3839) ov02c10: set exposure 0x37e
+I (3840) ov02c10: id=30018 is not supported
+I (3844) ov02c10: id=30016 is not supported
+I (3849) ov02c10: set exposure 0x2c7
+I (3852) ov02c10: dgain_fine a4, dgain_coarse 0, again_coarse 1
+I (3858) app_video: version: 2.0.1
+I (3859) app_video: driver:  MIPI-CSI
+I (3863) app_video: card:    MIPI-CSI
+I (3866) app_video: bus:     esp32p4:MIPI-CSI
+I (3870) app_video: width=1920 height=1080
+I (3874) Camera: Using user defined buffer
+I (4026) file_iterator: File : 1143358.jpg
+I (4028) file_iterator: File : 1143439.jpg
+I (4030) file_iterator: File : 1143365.jpg
+W (4047) main: SD card not available, skipping Video Player installation
+I (4047) main_task: Returned from app_main()
+I (5171) sdio_wrapper: SDIO master: Slot 1, Data-Lines: 4-bit Freq(KHz)[40000 KHz]
+I (5171) sdio_wrapper: GPIOs: CLK[18] CMD[19] D0[14] D1[15] D2[16] D3[17] Slave_Reset[54]
+I (5175) sdio_wrapper: Queues: Tx[20] Rx[20] SDIO-Rx-Mode[1]
+I (5214) sdio_wrapper: Function 0 Blocksize: 512
+I (5215) sdio_wrapper: Function 1 Blocksize: 512
+I (5315) H_SDIO_DRV: Card init success, TRANSPORT_RX_ACTIVE
+I (5315) transport: set_transport_state: 1
+I (5315) transport: Waiting for esp_hosted slave to be ready
+I (5357) H_SDIO_DRV: Starting SDIO process rx task
+I (5357) H_SDIO_DRV: SDIO Host operating in STREAMING MODE
+I (5357) H_SDIO_DRV: Open data path at slave
+I (5387) H_SDIO_DRV: Received ESP_PRIV_IF type message
+I (5387) transport: Received INIT event from ESP32 peripheral
+I (5387) transport: EVENT: 12
+I (5389) transport: Identified slave [esp32c6]
+I (5393) transport: EVENT: 11
+I (5396) transport: capabilities: 0xd
+I (5399) transport: Features supported are:
+I (5403) transport: 	 * WLAN
+I (5406) transport: 	   - HCI over SDIO
+I (5409) transport: 	   - BLE only
+I (5412) transport: EVENT: 13
+W (5415) transport: Version mismatch: Host [2.11.0] > Co-proc [2.3.0] ==> Upgrade co-proc to avoid RPC timeouts
+I (5425) transport: ESP board type is : 13 
+I (5429) transport: Base transport is set-up, TRANSPORT_TX_ACTIVE
+I (5435) H_API: Transport active
+I (5438) transport: Slave chip Id[12]
+I (5441) transport: raw_tp_dir[-], flow_ctrl: low[60] high[80]
+I (5447) transport: transport_delayed_init
+I (5450) esp_cli: Registering command: crash
+I (5454) esp_cli: Registering command: reboot
+I (5458) esp_cli: Registering command: mem-dump
+I (5463) esp_cli: Registering command: task-dump
+I (5467) esp_cli: Registering command: cpu-dump
+I (5471) esp_cli: Registering command: heap-trace
+I (5476) esp_cli: Registering command: sock-dump
+I (5480) esp_cli: Registering command: host-power-save
+I (5485) hci_stub_drv: Host BT Support: Disabled
+I (5489) H_SDIO_DRV: Received INIT event
+I (5493) H_SDIO_DRV: Event type: 0x22
+I (5496) H_SDIO_DRV: Write thread started
+I (5968) EUI_Setting: wifi_init done
+I (5971) RPC_WRAP: ESP Event: wifi station started
+I (5982) RPC_WRAP: ESP Event: wifi station started
+W (6075) rpc_rsp: Hosted RPC_Resp [0x21a], uid [4], resp code [12298]

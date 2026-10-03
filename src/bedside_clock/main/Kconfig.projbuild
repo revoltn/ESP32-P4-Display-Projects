@@ -1,0 +1,17 @@
+menu "Bedside clock"
+
+    config BEDSIDE_WAKE_MWW
+        bool "Wake word: microWakeWord streaming model (tflite-micro) instead of WakeNet"
+        default n
+        help
+            Detect the wake word with the embedded microWakeWord model
+            (main/models/wake_word.tflite + .json manifest) running on
+            esp-tflite-micro with ESP-NN PIE kernels, fed from the esp-sr AFE
+            output. WakeNet is then not initialised (saves ~324 KB PSRAM and
+            ~14 % of a core); MultiNet, VAD and the LocalAI stages are
+            unchanged. Off = the stock esp-sr WakeNet9 "Hi ESP".
+            Build the variant with:
+              idf.py -B build_mww -D SDKCONFIG=sdkconfig.mww \
+                -D "SDKCONFIG_DEFAULTS=sdkconfig.defaults;sdkconfig.mww.defaults" build
+
+endmenu

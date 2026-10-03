@@ -1,0 +1,210 @@
+esp_lvgl_port 2.9.0: bounded PPA wait + CPU-rotation fallback
+
+On the ESP32-P4 rev v1.3 the PPA scale-rotate-mirror "done" interrupt was observed
+never arriving (JTAG backtrace: the LVGL task parked in ppa_do_operation for minutes
+while a song streamed). Upstream waits on it with portMAX_DELAY, which freezes every
+redraw and, because touch is polled from the LVGL task, all input as well.
+
+  src/common/ppa/lcd_ppa.c        rotate issued NON_BLOCKING, completion waited for
+                                  on a binary semaphore with a 500 ms bound;
+                                  ESP_ERR_TIMEOUT returned to the caller
+  src/lvgl9/esp_lvgl_port_disp.c  CPU rotation buffer allocated even when the PPA is
+                                  in use; a failed/timed-out rotate flushes the
+                                  CPU-rotated frame and disables the PPA until reboot
+
+Apply from the project directory after `idf.py reconfigure` has populated
+managed_components (patches/apply_patches.sh does this and is idempotent):
+    patch -p1 -d managed_components/espressif__esp_lvgl_port < patches/0001-esp_lvgl_port-2.9.0-bounded-ppa-wait-cpu-fallback.patch
+
+Upstream: https://components.espressif.com/components/espressif/esp_lvgl_port/versions/2.9.0
+          https://github.com/espressif/esp-bsp/tree/master/components/esp_lvgl_port
+License:  Apache-2.0 (upstream); this modification is offered under the same terms.
+Author:   this repository's author (github.com/revoltn), 2026-09-06. See THIRD_PARTY_NOTICES.md.
+
+diff -ruN a/src/common/ppa/lcd_ppa.c b/src/common/ppa/lcd_ppa.c
+--- a/src/common/ppa/lcd_ppa.c
++++ b/src/common/ppa/lcd_ppa.c
+@@ -9,10 +9,23 @@
+ #include "esp_err.h"
+ #include "esp_check.h"
+ #include "esp_heap_caps.h"
++#include "esp_log.h"
+ #include "soc/soc_caps.h"
++#include "freertos/FreeRTOS.h"
++#include "freertos/semphr.h"
+ #include "lcd_ppa.h"
+ 
+-#define PPA_LCD_ENABLE_CB   0
++/* LOCAL PATCH (bedside_v01, 2026-09-06): the upstream code issues the rotate in
++ * PPA_TRANS_MODE_BLOCKING, which is xSemaphoreTake(portMAX_DELAY) inside
++ * esp_driver_ppa waiting for the transaction-done ISR. On the ESP32-P4 rev
++ * v1.3 that ISR was seen never arriving (JTAG backtrace: taskLVGL parked in
++ * ppa_do_operation for 7+ minutes while a song streamed), which freezes every
++ * redraw and - since touch is polled from the LVGL task - all input too.
++ * The rotate is now issued NON_BLOCKING and waited for with a bounded
++ * timeout; the caller treats ESP_ERR_TIMEOUT as "PPA dead" and falls back to
++ * CPU rotation. Keep this patch if the component is refreshed. */
++#define PPA_LCD_ENABLE_CB   1
++#define PPA_LCD_TIMEOUT_MS  500 /* a full 480x800 RGB565 rotate takes a few ms */
+ 
+ #if SOC_PPA_SUPPORTED
+ #define ALIGN_UP(num, align)    (((num) + ((align) - 1)) & ~((align) - 1))
+@@ -22,6 +35,7 @@
+     uint32_t             buffer_size;
+     ppa_client_handle_t  srm_handle;
+     ppa_srm_color_mode_t color_mode;
++    SemaphoreHandle_t    done_sem;   /* given by the PPA done ISR */
+ };
+ 
+ static const char *TAG = "PPA";
+@@ -76,14 +90,23 @@
+ 
+     ppa_ctx->color_mode = cfg->color_mode;
+ 
++#if PPA_LCD_ENABLE_CB
++    ppa_ctx->done_sem = xSemaphoreCreateBinary();
++    ESP_GOTO_ON_FALSE(ppa_ctx->done_sem, ESP_ERR_NO_MEM, err, TAG, "Not enough memory for PPA semaphore!");
++#endif
++
+ err:
+     if (ret != ESP_OK) {
++        if (ppa_ctx->srm_handle) {
++            ppa_unregister_client(ppa_ctx->srm_handle);
++        }
+         if (ppa_ctx->buffer) {
+             free(ppa_ctx->buffer);
+         }
+         if (ppa_ctx) {
+             free(ppa_ctx);
+         }
++        ppa_ctx = NULL;
+     }
+ 
+     return ppa_ctx;
+@@ -100,6 +123,10 @@
+ 
+     ppa_unregister_client(ppa_ctx->srm_handle);
+ 
++    if (ppa_ctx->done_sem) {
++        vSemaphoreDelete(ppa_ctx->done_sem);
++    }
++
+     free(ppa_ctx);
+ }
+ 
+@@ -189,13 +216,41 @@
+         .user_data = rotate_cfg->user_data,
+     };
+ 
++#if PPA_LCD_ENABLE_CB
++    if (rotate_cfg->ppa_mode == PPA_TRANS_MODE_BLOCKING && ppa_ctx->done_sem != NULL) {
++        /* Bounded wait instead of the driver's portMAX_DELAY (see header comment).
++         * The done callback receives the TRANSACTION's user_data, so it must be
++         * our context (the caller's user_data was unused upstream anyway). */
++        srm_oper_config.mode = PPA_TRANS_MODE_NON_BLOCKING;
++        srm_oper_config.user_data = ppa_ctx;
++        xSemaphoreTake(ppa_ctx->done_sem, 0); /* drop a stale completion */
++        esp_err_t err = ppa_do_scale_rotate_mirror(ppa_ctx->srm_handle, &srm_oper_config);
++        if (err != ESP_OK) {
++            return err;
++        }
++        if (xSemaphoreTake(ppa_ctx->done_sem, pdMS_TO_TICKS(PPA_LCD_TIMEOUT_MS)) != pdTRUE) {
++            ESP_LOGE(TAG, "SRM rotate did not complete within %d ms", PPA_LCD_TIMEOUT_MS);
++            return ESP_ERR_TIMEOUT;
++        }
++        return ESP_OK;
++    }
++#endif
++
+     return ppa_do_scale_rotate_mirror(ppa_ctx->srm_handle, &srm_oper_config);
+ }
+ 
+ #if PPA_LCD_ENABLE_CB
++/* ISR context (DMA2D transaction-done). */
+ static bool _lvgl_port_ppa_callback(ppa_client_handle_t ppa_client, ppa_event_data_t *event_data, void *user_data)
+ {
+-    return false;
++    (void)ppa_client;
++    (void)event_data;
++    lvgl_port_ppa_t *ppa_ctx = (lvgl_port_ppa_t *)user_data;
++    BaseType_t woken = pdFALSE;
++    if (ppa_ctx != NULL && ppa_ctx->done_sem != NULL) {
++        xSemaphoreGiveFromISR(ppa_ctx->done_sem, &woken);
++    }
++    return woken == pdTRUE;
+ }
+ #endif
+ 
+diff -ruN a/src/lvgl9/esp_lvgl_port_disp.c b/src/lvgl9/esp_lvgl_port_disp.c
+--- a/src/lvgl9/esp_lvgl_port_disp.c
++++ b/src/lvgl9/esp_lvgl_port_disp.c
+@@ -76,6 +76,7 @@
+         unsigned int full_refresh: 1;   /* Always make the whole screen redrawn */
+         unsigned int direct_mode: 1;    /* Use screen-sized buffers and draw to absolute coordinates */
+         unsigned int sw_rotate: 1;    /* Use software rotation (slower) or PPA if available */
++        unsigned int ppa_failed: 1;   /* LOCAL PATCH: a PPA rotate failed/timed out - CPU rotation from now on */
+     } flags;
+ } lvgl_port_display_ctx_t;
+ 
+@@ -470,12 +471,16 @@
+         };
+         disp_ctx->ppa_handle = lvgl_port_ppa_create(&ppa_cfg);
+         assert(disp_ctx->ppa_handle != NULL);
+-#else
++#endif //LVGL_PORT_PPA
++        /* LOCAL PATCH (bedside_v01, 2026-09-06): the CPU rotation buffer is
++         * allocated even when the PPA is used, so a PPA rotate that fails or
++         * times out (seen on ESP32-P4 rev v1.3: the done ISR never came and
++         * the LVGL task hung forever) degrades to CPU rotation instead of a
++         * dead screen. Same size as the PPA output buffer; PSRAM when the draw
++         * buffers are. */
+         disp_ctx->draw_buffs[2] = heap_caps_malloc(buffer_size * color_bytes, buff_caps);
+         ESP_GOTO_ON_FALSE(disp_ctx->draw_buffs[2], ESP_ERR_NO_MEM, err, TAG,
+                           "Not enough memory for LVGL buffer (rotation buffer) allocation!");
+-
+-#endif //LVGL_PORT_PPA
+     }
+ 
+ 
+@@ -679,8 +684,9 @@
+ 
+     /* SW rotation enabled */
+     if (disp_ctx->flags.sw_rotate && (disp_ctx->current_rotation > LV_DISPLAY_ROTATION_0)) {
++        bool rotated = false;
+ #if LVGL_PORT_PPA
+-        if (disp_ctx->ppa_handle) {
++        if (disp_ctx->ppa_handle && !disp_ctx->flags.ppa_failed) {
+             /* Screen vertical size */
+             int32_t hres = lv_display_get_horizontal_resolution(drv);
+             int32_t vres = lv_display_get_vertical_resolution(drv);
+@@ -709,11 +715,19 @@
+                 offsetx2 = rotate_cfg.area.x2;
+                 offsety1 = rotate_cfg.area.y1;
+                 offsety2 = rotate_cfg.area.y2;
++                rotated = true;
++            } else {
++                /* LOCAL PATCH: upstream flushed the UNROTATED buffer here. A
++                 * timed-out transaction may still be pending in the engine,
++                 * so the PPA is not used again until reboot. */
++                disp_ctx->flags.ppa_failed = 1;
++                ESP_LOGE(TAG, "PPA rotation failed (%s) - CPU rotation for the rest of this boot",
++                         esp_err_to_name(err));
+             }
+         }
+-#else
+-        /* SW rotation */
+-        if (disp_ctx->draw_buffs[2]) {
++#endif //LVGL_PORT_PPA
++        /* SW rotation (also the fallback when the PPA failed) */
++        if (!rotated && disp_ctx->draw_buffs[2]) {
+             int32_t ww = lv_area_get_width(area);
+             int32_t hh = lv_area_get_height(area);
+             lv_color_format_t cf = lv_display_get_color_format(drv);
+@@ -733,7 +747,6 @@
+             offsety1 = area->y1;
+             offsety2 = area->y2;
+         }
+-#endif //LVGL_PORT_PPA
+     }
+ 
+     if (disp_ctx->flags.swap_bytes) {

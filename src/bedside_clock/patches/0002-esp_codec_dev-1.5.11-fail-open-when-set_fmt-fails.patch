@@ -1,0 +1,44 @@
+esp_codec_dev 1.5.11: esp_codec_dev_open() fails when the data interface set_fmt fails
+
+Upstream ignores the return value of data_if->set_fmt(). When the I2S slot
+reconfiguration fails (typically ESP_ERR_NO_MEM allocating DMA descriptors in internal
+RAM) the channel is left with dma.desc == NULL and the following enable() panics in
+i2s_rx_channel_start with a NULL load. With this patch the open returns
+ESP_CODEC_DEV_DRV_ERR and clears the opened flags, so the caller can report
+"codec busy / out of memory" and retry later.
+
+  esp_codec_dev.c   check set_fmt's return in esp_codec_dev_open()
+
+Apply from the project directory after `idf.py reconfigure` has populated
+managed_components (patches/apply_patches.sh does this and is idempotent):
+    patch -p1 -d managed_components/espressif__esp_codec_dev < patches/0002-esp_codec_dev-1.5.11-fail-open-when-set_fmt-fails.patch
+
+Upstream: https://components.espressif.com/components/espressif/esp_codec_dev/versions/1.5.11
+          https://github.com/espressif/esp-adf/tree/master/components/esp_codec_dev
+License:  Apache-2.0 (upstream); this modification is offered under the same terms.
+Author:   this repository's author (github.com/revoltn), 2026-09-02. See THIRD_PARTY_NOTICES.md.
+
+diff -ruN a/esp_codec_dev.c b/esp_codec_dev.c
+--- a/esp_codec_dev.c
++++ b/esp_codec_dev.c
+@@ -176,7 +176,19 @@
+     const audio_codec_if_t *codec = dev->codec_if;
+     const audio_codec_data_if_t *data_if = dev->data_if;
+     if (data_if->set_fmt) {
+-        data_if->set_fmt(data_if, dev->dev_caps, fs);
++        /* LOCAL PATCH (bedside_v01, 2026-09-02): upstream ignores this return
++         * value. When the I2S slot reconfig fails (typically ESP_ERR_NO_MEM
++         * allocating DMA descriptors in internal RAM) the channel has been
++         * left with dma.desc == NULL, and the enable() below panics in
++         * i2s_rx_channel_start with a NULL load. Fail the open instead so the
++         * caller can report "codec busy / out of memory" and retry later. */
++        int fmt_ret = data_if->set_fmt(data_if, dev->dev_caps, fs);
++        if (fmt_ret != ESP_CODEC_DEV_OK) {
++            ESP_LOGE(TAG, "Data interface set_fmt failed (%d) - not enabling channel", fmt_ret);
++            dev->input_opened = false;
++            dev->output_opened = false;
++            return ESP_CODEC_DEV_DRV_ERR;
++        }
+     }
+     if (data_if->enable) {
+         data_if->enable(data_if, dev->dev_caps, true);

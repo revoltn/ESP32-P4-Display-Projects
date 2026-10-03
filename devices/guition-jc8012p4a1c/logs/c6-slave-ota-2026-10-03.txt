@@ -1,0 +1,520 @@
+﻿I (270) esp_image: segment 1: paddr=0016b59c vaddr=30100000 size=0007ch (   124) load
+
+I (272) esp_image: segment 2: paddr=0016b620 vaddr=4ff00000 size=049f8h ( 18936) load
+
+I (278) esp_image: segment 3: paddr=00170020 vaddr=48000020 size=4d9e0h (317920) map
+
+I (321) esp_image: segment 4: paddr=001bda08 vaddr=4ff049f8 size=1065ch ( 67164) load
+
+I (333) esp_image: segment 5: paddr=001ce06c vaddr=4ff15080 size=042cch ( 17100) load
+
+I (342) boot: Loaded app from partition at offset 0x10000
+
+I (342) boot: Disabling RNG early entropy source...
+
+I (353) hex_psram: vendor id    : 0x0d (AP)
+
+I (354) hex_psram: Latency      : 0x01 (Fixed)
+
+I (354) hex_psram: DriveStr.    : 0x00 (25 Ohm)
+
+I (355) hex_psram: dev id       : 0x03 (generation 4)
+
+I (359) hex_psram: density      : 0x07 (256 Mbit)
+
+I (364) hex_psram: good-die     : 0x06 (Pass)
+
+I (368) hex_psram: SRF          : 0x02 (Slow Refresh)
+
+I (373) hex_psram: BurstType    : 0x00 ( Wrap)
+
+I (377) hex_psram: BurstLen     : 0x03 (2048 Byte)
+
+I (381) hex_psram: BitMode      : 0x01 (X16 Mode)
+
+I (386) hex_psram: Readlatency  : 0x04 (14 cycles@Fixed)
+
+I (391) hex_psram: DriveStrength: 0x00 (1/1)
+
+I (395) MSPI Timing: Enter psram timing tuning
+
+I esp_psram: Found 32MB PSRAM device
+
+I esp_psram: Speed: 200MHz
+
+I (651) mmu_psram: .rodata xip on psram
+
+I (669) mmu_psram: .text xip on psram
+
+I (670) hex_psram: psram CS IO is dedicated
+
+I (670) cpu_start: Multicore app
+
+I (679) cpu_start: GPIO 38 and 37 are used as console UART I/O pins
+
+I (680) cpu_start: Pro cpu start user code
+
+I (680) cpu_start: cpu freq: 360000000 Hz
+
+I (681) app_init: Application information:
+
+I (685) app_init: Project name:     tool_c6_ota
+
+I (690) app_init: App version:      0ea757f-dirty
+
+I (694) app_init: Compile time:     Oct  3 2026 11:13:33
+
+I (699) app_init: ELF file SHA256:  bec53871c...
+
+I (703) app_init: ESP-IDF:          v5.5.5
+
+I (707) efuse_init: Min chip rev:     v1.0
+
+I (711) efuse_init: Max chip rev:     v1.99 
+
+I (715) efuse_init: Chip rev:         v1.3
+
+I (719) heap_init: Initializing. RAM available for dynamic allocation:
+
+I (725) heap_init: At 4FF1B3A0 len 0001FC20 (127 KiB): RETENT_RAM
+
+I (731) heap_init: At 4FF3AFC0 len 00004BF0 (18 KiB): RAM
+
+I (736) heap_init: At 4FF40000 len 00060000 (384 KiB): RAM
+
+I (741) heap_init: At 50108080 len 00007F80 (31 KiB): RTCRAM
+
+I (747) heap_init: At 3010007C len 00001F84 (7 KiB): SPM
+
+I (752) esp_psram: Adding pool of 31040K of PSRAM memory to heap allocator
+
+I (758) esp_psram: Adding pool of 9K of PSRAM memory gap generated due to end address alignment of irom to the heap allocator
+
+I (769) esp_psram: Adding pool of 18K of PSRAM memory gap generated due to end address alignment of drom to the heap allocator
+
+W (781) spi_flash: Detected boya flash chip but using generic driver. For optimal functionality, enable `SPI_FLASH_SUPPORT_BOYA_CHIP` in menuconfig
+
+I (793) spi_flash: detected chip: generic
+
+I (797) spi_flash: flash io: qio
+
+I (818) sleep_gpio: Configure to isolate all GPIO pins in sleep state
+
+I (823) sleep_gpio: Enable automatic switching of GPIO sleep configuration
+
+I (830) H_SDIO_DRV: sdio_data_to_rx_buf_task started
+
+I (835) main_task: Started on CPU0
+
+I (838) esp_psram: Reserving pool of 64K of internal memory for DMA/internal allocations
+
+I (845) main_task: Calling app_main()
+
+I (849) c6_ota: embedded slave image: 1226704 bytes, magic 0xe9, chip id 13, app version '2.12.12'
+
+I (861) H_API: ESP-Hosted Try to communicate with ESP-Hosted slave
+
+
+
+I (864) transport: Attempt connection with slave: retry[0]
+
+W (869) H_SDIO_DRV: Reset slave using GPIO[54]
+
+I (873) os_wrapper_esp: GPIO [54] configured
+
+I (2397) sdio_wrapper: SDIO master: Slot 1, Data-Lines: 4-bit Freq(KHz)[20000 KHz]
+
+I (2397) sdio_wrapper: GPIOs: CLK[18] CMD[19] D0[14] D1[15] D2[16] D3[17] Slave_Reset[54]
+
+I (2401) sdio_wrapper: Queues: Tx[20] Rx[20] SDIO-Rx-Mode[1]
+
+I (2440) sdio_wrapper: Function 0 Blocksize: 512
+
+I (2440) sdio_wrapper: Function 1 Blocksize: 512
+
+I (2540) H_SDIO_DRV: Card init success, TRANSPORT_RX_ACTIVE
+
+I (2540) transport: set_transport_state: 1
+
+I (2540) transport: Waiting for esp_hosted slave to be ready
+
+I (2630) H_SDIO_DRV: SDIO Host operating in STREAMING MODE
+
+I (2630) H_SDIO_DRV: Open data path at slave
+
+I (2630) H_SDIO_DRV: Starting SDIO process rx task
+
+I (2657) H_SDIO_DRV: Received ESP_PRIV_IF type message
+
+I (2658) transport: Received INIT event from ESP32 peripheral
+
+I (2658) transport: EVENT: 12
+
+I (2659) transport: Identified slave [esp32c6]
+
+W (2664) H_SDIO_DRV: SDIO clock freq set to [20000]KHz, Max possible (on PCB) is 40000KHz
+
+I (2672) transport: EVENT: 11
+
+I (2674) transport: capabilities: 0xd
+
+I (2678) transport: Features supported are:
+
+I (2681) transport: 	 * WLAN
+
+I (2684) transport: 	   - HCI over SDIO
+
+I (2688) transport: 	   - BLE only
+
+I (2691) transport: EVENT: 13
+
+W (2693) transport: Version mismatch: Host [2.12.0] > Co-proc [2.3.0] ==> Upgrade co-proc to avoid RPC timeouts
+
+I (2703) transport: ESP board type is : 13 
+
+
+
+
+I (2707) transport: Base transport is set-up, TRANSPORT_TX_ACTIVE
+
+I (2713) H_API: Transport active
+
+I (2716) transport: Slave chip Id[12]
+
+I (2720) transport: raw_tp_dir[-], flow_ctrl: low[60] high[80]
+
+I (2725) transport: transport_delayed_init
+
+I (2729) esp_cli: Registering command: crash
+
+I (2733) esp_cli: Registering command: reboot
+
+I (2737) esp_cli: Registering command: mem-dump
+
+I (2741) esp_cli: Registering command: task-dump
+
+I (2746) esp_cli: Registering command: cpu-dump
+
+I (2750) esp_cli: Registering command: heap-trace
+
+I (2754) esp_cli: Registering command: sock-dump
+
+I (2759) esp_cli: Registering command: host-power-save
+
+I (2763) hci_stub_drv: Host BT Support: Disabled
+
+I (2768) H_SDIO_DRV: Received INIT event
+
+I (2771) H_SDIO_DRV: Event type: 0x22
+
+I (2775) H_SDIO_DRV: Write thread started
+
+I (2779) c6_ota: esp_hosted transport up
+
+I (2831) c6_ota: slave reports esp_hosted 2.3.2
+
+W (2832) c6_ota: starting slave OTA -> 2.12.12 in 3 s
+
+I (7483) c6_ota:   150000/1226704 bytes (12%)
+
+I (8783) c6_ota:   300000/1226704 bytes (24%)
+
+I (10083) c6_ota:   450000/1226704 bytes (36%)
+
+I (11383) c6_ota:   600000/1226704 bytes (48%)
+
+I (12683) c6_ota:   750000/1226704 bytes (61%)
+
+I (13983) c6_ota:   900000/1226704 bytes (73%)
+
+I (15283) c6_ota:   1050000/1226704 bytes (85%)
+
+I (16583) c6_ota:   1200000/1226704 bytes (97%)
+
+I (17083) c6_ota: ota_end -> ESP_OK after 10.9 s
+
+I (17083) c6_ota: slave < 2.6: no activate API, the slave switches on ota_end
+
+W (17083) c6_ota: restarting host in 5 s to resync; the next boot prints the new slave version
+
+ESP-ROM:esp32p4-eco2-20240710
+
+Build:Jul 10 2024
+
+rst:0xc (SW_CPU_RESET),boot:0xe (SPI_FAST_FLASH_BOOT)
+
+Core0 Saved PC:0x4ff033f2
+
+Core1 Saved PC:0x4ff0353a
+
+SPI mode:DIO, clock div:1
+
+load:0x4ff33ce0,len:0x173c
+
+load:0x4ff29ed0,len:0x1028
+
+load:0x4ff2cbd0,len:0x3624
+
+entry 0x4ff29eda
+
+I (28) boot: ESP-IDF v5.5.5 2nd stage bootloader
+
+I (28) boot: compile time Oct  3 2026 11:14:24
+
+I (29) boot: Multicore bootloader
+
+I (30) boot: chip revision: v1.3
+
+I (31) boot: efuse block revision: v0.3
+
+I (35) qio_mode: Enabling default flash chip QIO
+
+I (39) boot.esp32p4: SPI Speed      : 80MHz
+
+I (43) boot.esp32p4: SPI Mode       : QIO
+
+I (47) boot.esp32p4: SPI Flash Size : 16MB
+
+I (50) boot: Enabling RNG early entropy source...
+
+I (55) boot: Partition Table:
+
+I (58) boot: ## Label            Usage          Type ST Offset   Length
+
+I (64) boot:  0 nvs              WiFi data        01 02 00009000 00006000
+
+I (70) boot:  1 phy_init         RF data          01 01 0000f000 00001000
+
+I (77) boot:  2 factory          factory app      00 00 00010000 00300000
+
+I (84) boot: End of partition table
+
+I (87) esp_image: segment 0: paddr=00010020 vaddr=48050020 size=15b574h (1422708) map
+
+I (270) esp_image: segment 1: paddr=0016b59c vaddr=30100000 size=0007ch (   124) load
+
+I (272) esp_image: segment 2: paddr=0016b620 vaddr=4ff00000 size=049f8h ( 18936) load
+
+I (278) esp_image: segment 3: paddr=00170020 vaddr=48000020 size=4d9e0h (317920) map
+
+I (322) esp_image: segment 4: paddr=001bda08 vaddr=4ff049f8 size=1065ch ( 67164) load
+
+I (333) esp_image: segment 5: paddr=001ce06c vaddr=4ff15080 size=042cch ( 17100) load
+
+I (342) boot: Loaded app from partition at offset 0x10000
+
+I (342) boot: Disabling RNG early entropy source...
+
+I (353) hex_psram: vendor id    : 0x0d (AP)
+
+I (354) hex_psram: Latency      : 0x01 (Fixed)
+
+I (354) hex_psram: DriveStr.    : 0x00 (25 Ohm)
+
+I (355) hex_psram: dev id       : 0x03 (generation 4)
+
+I (359) hex_psram: density      : 0x07 (256 Mbit)
+
+I (364) hex_psram: good-die     : 0x06 (Pass)
+
+I (368) hex_psram: SRF          : 0x02 (Slow Refresh)
+
+I (373) hex_psram: BurstType    : 0x00 ( Wrap)
+
+I (377) hex_psram: BurstLen     : 0x03 (2048 Byte)
+
+I (381) hex_psram: BitMode      : 0x01 (X16 Mode)
+
+I (386) hex_psram: Readlatency  : 0x04 (14 cycles@Fixed)
+
+I (391) hex_psram: DriveStrength: 0x00 (1/1)
+
+I (395) MSPI Timing: Enter psram timing tuning
+
+I esp_psram: Found 32MB PSRAM device
+
+I esp_psram: Speed: 200MHz
+
+I (651) mmu_psram: .rodata xip on psram
+
+I (669) mmu_psram: .text xip on psram
+
+I (670) hex_psram: psram CS IO is dedicated
+
+I (670) cpu_start: Multicore app
+
+I (679) cpu_start: GPIO 38 and 37 are used as console UART I/O pins
+
+I (680) cpu_start: Pro cpu start user code
+
+I (680) cpu_start: cpu freq: 360000000 Hz
+
+I (682) app_init: Application information:
+
+I (685) app_init: Project name:     tool_c6_ota
+
+I (690) app_init: App version:      0ea757f-dirty
+
+I (694) app_init: Compile time:     Oct  3 2026 11:13:33
+
+I (699) app_init: ELF file SHA256:  bec53871c...
+
+I (704) app_init: ESP-IDF:          v5.5.5
+
+I (707) efuse_init: Min chip rev:     v1.0
+
+I (711) efuse_init: Max chip rev:     v1.99 
+
+I (715) efuse_init: Chip rev:         v1.3
+
+I (719) heap_init: Initializing. RAM available for dynamic allocation:
+
+I (725) heap_init: At 4FF1B3A0 len 0001FC20 (127 KiB): RETENT_RAM
+
+I (731) heap_init: At 4FF3AFC0 len 00004BF0 (18 KiB): RAM
+
+I (736) heap_init: At 4FF40000 len 00060000 (384 KiB): RAM
+
+I (742) heap_init: At 50108080 len 00007F80 (31 KiB): RTCRAM
+
+I (747) heap_init: At 3010007C len 00001F84 (7 KiB): SPM
+
+I (752) esp_psram: Adding pool of 31040K of PSRAM memory to heap allocator
+
+I (758) esp_psram: Adding pool of 9K of PSRAM memory gap generated due to end address alignment of irom to the heap allocator
+
+I (769) esp_psram: Adding pool of 18K of PSRAM memory gap generated due to end address alignment of drom to the heap allocator
+
+W (781) spi_flash: Detected boya flash chip but using generic driver. For optimal functionality, enable `SPI_FLASH_SUPPORT_BOYA_CHIP` in menuconfig
+
+I (793) spi_flash: detected chip: generic
+
+I (797) spi_flash: flash io: qio
+
+I (818) sleep_gpio: Configure to isolate all GPIO pins in sleep state
+
+I (823) sleep_gpio: Enable automatic switching of GPIO sleep configuration
+
+I (830) H_SDIO_DRV: sdio_data_to_rx_buf_task started
+
+I (835) main_task: Started on CPU0
+
+I (838) esp_psram: Reserving pool of 64K of internal memory for DMA/internal allocations
+
+I (845) main_task: Calling app_main()
+
+I (849) c6_ota: embedded slave image: 1226704 bytes, magic 0xe9, chip id 13, app version '2.12.12'
+
+I (862) H_API: ESP-Hosted Try to communicate with ESP-Hosted slave
+
+
+
+I (864) transport: Attempt connection with slave: retry[0]
+
+W (869) H_SDIO_DRV: Reset slave using GPIO[54]
+
+I (873) os_wrapper_esp: GPIO [54] configured
+
+I (2397) sdio_wrapper: SDIO master: Slot 1, Data-Lines: 4-bit Freq(KHz)[20000 KHz]
+
+I (2397) sdio_wrapper: GPIOs: CLK[18] CMD[19] D0[14] D1[15] D2[16] D3[17] Slave_Reset[54]
+
+I (2401) sdio_wrapper: Queues: Tx[20] Rx[20] SDIO-Rx-Mode[1]
+
+I (2440) sdio_wrapper: Function 0 Blocksize: 512
+
+I (2440) sdio_wrapper: Function 1 Blocksize: 512
+
+I (2540) H_SDIO_DRV: Card init success, TRANSPORT_RX_ACTIVE
+
+I (2540) transport: set_transport_state: 1
+
+I (2540) transport: Waiting for esp_hosted slave to be ready
+
+I (2630) H_SDIO_DRV: SDIO Host operating in STREAMING MODE
+
+I (2630) H_SDIO_DRV: Open data path at slave
+
+I (2630) H_SDIO_DRV: Starting SDIO process rx task
+
+I (2657) H_SDIO_DRV: Received ESP_PRIV_IF type message
+
+I (2658) transport: Received INIT event from ESP32 peripheral
+
+I (2658) transport: EVENT: 12
+
+I (2659) transport: Identified slave [esp32c6]
+
+W (2663) H_SDIO_DRV: SDIO clock freq set to [20000]KHz, Max possible (on PCB) is 40000KHz
+
+I (2671) transport: SDIO mode: slave: streaming, host: streaming
+
+I (2677) transport: EVENT: 11
+
+I (2680) transport: capabilities: 0xd
+
+I (2683) transport: Features supported are:
+
+I (2687) transport: 	 * WLAN
+
+I (2690) transport: 	   - HCI over SDIO
+
+I (2693) transport: 	   - BLE only
+
+I (2696) transport: EVENT: 16
+
+I (2699) transport: extended capabilities: 0x0
+
+I (2703) transport: Extended Features supported: [0]
+
+I (2708) transport: EVENT: 13
+
+I (2711) transport: ESP board type is : 13 
+
+
+
+
+I (2715) transport: Base transport is set-up, TRANSPORT_TX_ACTIVE
+
+I (2721) H_API: Transport active
+
+I (2724) transport: Slave chip Id[12]
+
+I (2727) transport: raw_tp_dir[-], flow_ctrl: low[60] high[80]
+
+I (2733) transport: transport_delayed_init
+
+I (2736) esp_cli: Registering command: crash
+
+I (2740) esp_cli: Registering command: reboot
+
+I (2744) esp_cli: Registering command: mem-dump
+
+I (2749) esp_cli: Registering command: task-dump
+
+I (2753) esp_cli: Registering command: cpu-dump
+
+I (2757) esp_cli: Registering command: heap-trace
+
+I (2762) esp_cli: Registering command: sock-dump
+
+I (2766) esp_cli: Registering command: host-power-save
+
+I (2771) hci_stub_drv: Host BT Support: Disabled
+
+I (2775) H_SDIO_DRV: Received INIT event
+
+I (2779) H_SDIO_DRV: Event type: 0x22
+
+I (2782) H_SDIO_DRV: Write thread started
+
+I (2786) c6_ota: esp_hosted transport up
+
+I (2830) RPC_WRAP: Coprocessor Boot-up
+
+I (2835) c6_ota: slave reports esp_hosted 2.12.12
+
+W (2835) c6_ota: slave already runs 2.12.12: nothing to do. Flash the real firmware back.
+
+I (2836) main_task: Returned from app_main()
+

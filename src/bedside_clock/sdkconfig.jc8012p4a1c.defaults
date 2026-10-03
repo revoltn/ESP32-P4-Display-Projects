@@ -1,0 +1,22 @@
+# board: Guition JC8012P4A1C_I_W_Y 10.1" (ESP32-P4 + C6, JD9365 800x1280, GSL3680 touch)
+# Layered AFTER sdkconfig.defaults; only what differs from the 4.3" JC4880P443C lives here.
+# Build:
+#   idf.py -B build_jc8012p4a1c_mww -D SDKCONFIG=sdkconfig.jc8012p4a1c_mww \
+#     -D "SDKCONFIG_DEFAULTS=sdkconfig.defaults;sdkconfig.jc8012p4a1c.defaults;sdkconfig.mww.defaults" build
+# Everything else (P4 rev <3, 16 MB flash, PSRAM 200 MHz, hosted SDIO on 18/19/14-17 with
+# reset GPIO54, OV02C10 camera, LVGL fonts) is identical on this board.
+
+# Display: the BSP's 1280x800 branch drives the JD9365 (vendor repurposed the ILI9881C slot).
+# CONFIG_BSP_LCD_TYPE_1024_600 is not set
+CONFIG_BSP_LCD_TYPE_1280_800=y
+# Panel revision from the rear label: 2627 and below = V1, 2628 and above = V2.
+# This unit (2026-10-03) is V2: DPI 70 MHz, vsync back porch 10, own init table.
+# CONFIG_BSP_JD9365_PANEL_V1 is not set
+CONFIG_BSP_JD9365_PANEL_V2=y
+
+# Touch orientation (GSL3680 reports native portrait pixels 1:1; no scaling).
+# Measured 2026-10-03 on this unit: mirror X only. The vendor BSP mirrors Y instead because
+# its display is mirrored on both axes; ours is not.
+# CONFIG_BSP_TOUCH_SWAP_XY is not set
+CONFIG_BSP_TOUCH_MIRROR_X=y
+# CONFIG_BSP_TOUCH_MIRROR_Y is not set

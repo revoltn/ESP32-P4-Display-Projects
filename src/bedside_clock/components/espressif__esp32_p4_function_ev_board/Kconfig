@@ -1,0 +1,205 @@
+menu "Board Support Package (ESP32-P4)"
+
+    config BSP_ERROR_CHECK
+        bool "Enable error check in BSP"
+        default y
+        help
+            Error check assert the application before returning the error code.
+            
+    menu "I2C"
+        config BSP_I2C_NUM
+            int "I2C peripheral index"
+            default 1
+            range 0 1
+            help
+                ESP32P4 has two I2C peripherals, pick the one you want to use.
+
+        config BSP_I2C_FAST_MODE
+            bool "Enable I2C fast mode"
+            default y
+            help
+                I2C has two speed modes: normal (100kHz) and fast (400kHz).
+
+        config BSP_I2C_CLK_SPEED_HZ
+            int
+            default 400000 if BSP_I2C_FAST_MODE
+            default 100000
+    endmenu
+
+    menu "I2S"
+        config BSP_I2S_NUM
+            int "I2S peripheral index"
+            default 1
+            range 0 2
+            help
+                ESP32P4 has three I2S peripherals, pick the one you want to use.
+    endmenu
+
+    menu "uSD card - Virtual File System"
+        config BSP_SD_FORMAT_ON_MOUNT_FAIL
+            bool "Format uSD card if mounting fails"
+            default n
+            help
+                The SDMMC host will format (FAT) the uSD card if it fails to mount the filesystem.
+
+        config BSP_SD_MOUNT_POINT
+            string "uSD card mount point"
+            default "/sdcard"
+            help
+                Mount point of the uSD card in the Virtual File System
+
+    endmenu
+
+    menu "SPIFFS - Virtual File System"
+        config BSP_SPIFFS_FORMAT_ON_MOUNT_FAIL
+            bool "Format SPIFFS if mounting fails"
+            default n
+            help
+                Format SPIFFS if it fails to mount the filesystem.
+
+        config BSP_SPIFFS_MOUNT_POINT
+            string "SPIFFS mount point"
+            default "/spiffs"
+            help
+                Mount point of SPIFFS in the Virtual File System.
+
+        config BSP_SPIFFS_PARTITION_LABEL
+            string "Partition label of SPIFFS"
+            default "storage"
+            help
+                Partition label which stores SPIFFS.
+
+        config BSP_SPIFFS_MAX_FILES
+            int "Max files supported for SPIFFS VFS"
+            default 5
+            help
+                Supported max files for SPIFFS in the Virtual File System.
+    endmenu
+
+    menu "Display"
+        config BSP_LCD_DPI_BUFFER_NUMS
+            int "Set number of frame buffers"
+            default 1
+            range 1 3
+            help
+                Let DPI LCD driver create a specified number of frame-size buffers. Only when it is set to multiple can the avoiding tearing be turned on.
+
+        config BSP_DISPLAY_LVGL_AVOID_TEAR
+            bool "Avoid tearing effect"
+            depends on BSP_LCD_DPI_BUFFER_NUMS > 1
+            default "n"
+            help
+                Avoid tearing effect through LVGL buffer mode and double frame buffers of RGB LCD. This feature is only available for RGB LCD.
+
+        choice BSP_DISPLAY_LVGL_MODE
+            depends on BSP_DISPLAY_LVGL_AVOID_TEAR
+            prompt "Select LVGL buffer mode"
+            default BSP_DISPLAY_LVGL_FULL_REFRESH
+            config BSP_DISPLAY_LVGL_FULL_REFRESH
+                bool "Full refresh"
+            config BSP_DISPLAY_LVGL_DIRECT_MODE
+                bool "Direct mode"
+        endchoice
+            
+        config BSP_DISPLAY_BRIGHTNESS_LEDC_CH
+        int "LEDC channel index"
+        default 1
+        range 0 7
+        help
+            LEDC channel is used to generate PWM signal that controls display brightness.
+            Set LEDC index that should be used.
+
+        choice BSP_LCD_COLOR_FORMAT
+            prompt "Select LCD color format"
+            default BSP_LCD_COLOR_FORMAT_RGB565
+            help
+                Select the LCD color format RGB565/RGB888.
+
+            config BSP_LCD_COLOR_FORMAT_RGB565
+                bool "RGB565"
+            config BSP_LCD_COLOR_FORMAT_RGB888
+                bool "RGB888"
+        endchoice   
+            
+        config BSP_LCD_USE_DMA2D
+            bool "Select whether to use DMA2D"
+            default "y"
+            help
+                Select whether to use DMA2D to draw the bitmap.
+
+        choice BSP_LCD_TYPE
+            prompt "Select LCD type"
+            default BSP_LCD_TYPE_1024_600
+            help
+                Select the LCD.
+
+            config BSP_LCD_TYPE_1024_600
+                bool "480x800 ST7701 (Guition JC4880P443C 4.3in)"
+            config BSP_LCD_TYPE_1280_800
+                bool "800x1280 JD9365 (Guition JC8012P4A1C 10.1in)"
+            config BSP_LCD_TYPE_HDMI
+                bool "HDMI - lt8912b"
+        endchoice    
+            
+        choice BSP_JD9365_PANEL_REV
+            depends on BSP_LCD_TYPE_1280_800
+            prompt "JC8012P4A1C panel revision (rear label)"
+            default BSP_JD9365_PANEL_V2
+            help
+                Guition shipped two JD9365 panels under the same part number. The rear
+                label number tells them apart: 2627 and below = V1 (DPI 60 MHz, vsync
+                4/8/20, driver default init table), 2628 and above = V2 (DPI 70 MHz,
+                vsync 4/10/20, its own init table). A wrong choice gives a black or
+                torn screen, nothing worse.
+
+            config BSP_JD9365_PANEL_V1
+                bool "V1 (label <= 2627): 60 MHz, default init table"
+            config BSP_JD9365_PANEL_V2
+                bool "V2 (label >= 2628): 70 MHz, V2 init table"
+        endchoice
+
+        config BSP_TOUCH_SWAP_XY
+            bool "10.1in touch: swap X and Y"
+            depends on BSP_LCD_TYPE_1280_800
+            default n
+            help
+                Orientation of the GSL3680 touch coordinates relative to the native portrait
+                panel. The driver returns native pixels 1:1, so only these three flags are
+                needed. Check with a four-corner tap test (top-left must register top-left).
+
+        config BSP_TOUCH_MIRROR_X
+            bool "10.1in touch: mirror X"
+            depends on BSP_LCD_TYPE_1280_800
+            default y
+            help
+                Verified on the JC8012P4A1C V2 unit with the bedside_clock display setup
+                (software-rotated landscape, display not mirrored): X mirrored, Y not.
+
+        config BSP_TOUCH_MIRROR_Y
+            bool "10.1in touch: mirror Y"
+            depends on BSP_LCD_TYPE_1280_800
+            default n
+            help
+                The Guition vendor BSP uses mirror Y because its LVGL display is mirrored on
+                both axes. Select this only together with a mirrored display.
+
+        choice BSP_LCD_HDMI_RESOLUTION
+            depends on BSP_LCD_TYPE_HDMI
+            prompt "Select HDMI resolution"
+            default BSP_LCD_HDMI_1280x720_60HZ
+            help
+                Select the HDMI resolution.
+
+            config BSP_LCD_HDMI_800x600_60HZ
+                bool "800x600@60HZ"
+            config BSP_LCD_HDMI_1280x720_60HZ
+                bool "1280x720@60HZ"
+            config BSP_LCD_HDMI_1280x800_60HZ
+                bool "1280x800@60HZ"
+            config BSP_LCD_HDMI_1920x1080_30HZ
+                bool "1920x1080@30HZ"
+        endchoice          
+        
+    endmenu
+    
+endmenu

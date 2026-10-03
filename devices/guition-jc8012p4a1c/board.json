@@ -1,0 +1,316 @@
+{
+  "schema": 1,
+  "id": "jc8012p4a1c",
+  "name": "Guition JC8012P4A1C_I_W_Y 10.1\" smart display",
+  "vendor": "Guition (Shenzhen Jingcai)",
+  "sku": "JC8012P4A1C_I_W_Y",
+  "sku_variants": {
+    "JC8012P4A1C_I_W_Y": "capacitive touch",
+    "JC8012P4A1C_I_W_Y1": "capacitive touch, battery fitted"
+  },
+  "aliases": [
+    "jc8012p4a1",
+    "JC8012P4A1C"
+  ],
+  "soc": {
+    "target": "esp32p4",
+    "silicon_rev_seen": "v1.3",
+    "rev_min": "1.0",
+    "rev_max": "1.99",
+    "cpu_mhz": 360,
+    "flash_mb": 16,
+    "flash_chip": "Boya (generic driver)",
+    "flash_mode": "qio",
+    "flash_mhz": 80,
+    "psram_mb": 32,
+    "psram_mode": "hex (AP, 256 Mbit, generation 4)",
+    "psram_mhz": 200
+  },
+  "coprocessor": {
+    "chip": "esp32c6",
+    "transport": "sdio",
+    "sdio": {
+      "slot": 1,
+      "width": 4,
+      "clk": 18,
+      "cmd": 19,
+      "d0": 14,
+      "d1": 15,
+      "d2": 16,
+      "d3": 17,
+      "freq_khz": 40000,
+      "freq_khz_conservative": 20000
+    },
+    "reset_gpio": 54,
+    "reset_active_high": true,
+    "factory_slave_version": "2.3.2 (reported by esp_hosted_get_coprocessor_fwversion; the handshake warning prints 2.3.0)",
+    "expected_slave_version": "2.12.x",
+    "factory_host_version": "2.11.0 (factory firmware already logs 'Version mismatch ... Upgrade co-proc')",
+    "capabilities": [
+      "wlan",
+      "hci-over-sdio",
+      "ble-only"
+    ],
+    "uart_recovery_header": "CN5: 3V3, GND, C6_U0TXD, C6_U0RXD, C6_IO9, C6_CHIP_PU (schematic sheet 5_ESP32-C6; pin order/location to confirm on the board)",
+    "extra_links": {
+      "p4_gpio6_to_c6_io2": "wired per schematic; purpose unknown"
+    },
+    "current_slave_version": "2.12.12 (slave OTA over SDIO, 2026-10-03, src/tool_c6_ota)"
+  },
+  "display": {
+    "diagonal_in": 10.1,
+    "controller": "JD9365",
+    "lcd_id": "93 65 04",
+    "interface": "mipi-dsi",
+    "lanes": 2,
+    "lane_mbps": 1500,
+    "lane_mbps_alternatives": {
+      "esphome_JC8012P4A1": 1000,
+      "esphome_JC8012P4A1-V2": 1500,
+      "espcontrol_v2": 840
+    },
+    "dpi_mhz": 60,
+    "dpi_mhz_v2_panel": 70,
+    "native_w": 800,
+    "native_h": 1280,
+    "portrait_native": true,
+    "hsync": {
+      "pulse": 20,
+      "back_porch": 20,
+      "front_porch": 40
+    },
+    "vsync": {
+      "pulse": 4,
+      "back_porch": 8,
+      "front_porch": 20
+    },
+    "vsync_v2_panel": {
+      "pulse": 4,
+      "back_porch": 10,
+      "front_porch": 20
+    },
+    "color_format": "RGB565",
+    "frame_buffers": 2,
+    "reset_gpio": 27,
+    "backlight": {
+      "gpio": 23,
+      "ledc_hz": 20000,
+      "ledc_bits": 10,
+      "max_duty_pct": 95
+    },
+    "dsi_phy_ldo": {
+      "channel": 3,
+      "mv": 2500
+    },
+    "active_area_mm": [
+      216.58,
+      135.36
+    ],
+    "bsp_kconfig": "bedside_clock BSP fork (esp32_p4_function_ev_board 5.2.3 + local 10.1in branch): CONFIG_BSP_LCD_TYPE_1280_800 = JD9365 via espressif/esp_lcd_jd9365, plus choice CONFIG_BSP_JD9365_PANEL_V1/V2; log line \"Install JD9365 LCD control panel (V2 table, DPI 70 MHz)\"",
+    "panel_rev": "V2",
+    "panel_rev_note": "from the rear label (2628 or higher) read 2026-10-03; drives CONFIG_BSP_JD9365_PANEL_V2 in src/bedside_clock/sdkconfig.jc8012p4a1c.defaults"
+  },
+  "touch": {
+    "controller": "GSL3680 (Silead)",
+    "i2c_addr": "0x40",
+    "rst_gpio": 22,
+    "int_gpio": 21,
+    "int_wired": true,
+    "polled": false,
+    "firmware_upload": true,
+    "firmware_upload_ms": 800,
+    "points": 5,
+    "transform": {
+      "swap_xy": false,
+      "mirror_x": false,
+      "mirror_y": true
+    },
+    "transform_notes": {
+      "esphome_after_rotation_90": {
+        "swap_xy": true,
+        "mirror_x": true,
+        "mirror_y": false,
+        "x_max": 880,
+        "y_max": 1648
+      },
+      "espcontrol": {
+        "swap_xy": false,
+        "mirror_x": true,
+        "mirror_y": false
+      }
+    },
+    "driver": "mangoo1/esp_lcd_touch_gsl3680 ^1.0.0 (GPL-2.0-or-later; registry dependency, never vendored)",
+    "benign_log": "gsl3680 startup_chip failed read 0xb0 = 5a,5a,5a,5a"
+  },
+  "i2c": {
+    "sda": 7,
+    "scl": 8,
+    "freq_hz": 400000,
+    "port": 1,
+    "shared_with": [
+      "touch",
+      "codec",
+      "camera-sccb"
+    ]
+  },
+  "audio": {
+    "codec": "ES8311",
+    "codec_i2c_addr": "0x18",
+    "amp": "class-D on PA GPIO20 (part number to confirm from schematic sheet 7_CODEC)",
+    "i2s": {
+      "mclk": 13,
+      "bclk": 12,
+      "ws": 10,
+      "dout": 9,
+      "din": 11
+    },
+    "pa_gpio": 20,
+    "builtin_speaker": true,
+    "speaker_connector": null,
+    "mic_count": 2,
+    "mic_type": "analog, both into the single ES8311 ADC (inference: no ES7210 in the factory boot log)",
+    "afe_input_format": "M",
+    "defaults": {
+      "volume": 60,
+      "alarm_volume": 75,
+      "mic_gain_db": 24,
+      "digital_gain": 12,
+      "note": "starting points copied from the 4.3 inch and the factory volume 60; tune in phase 4"
+    }
+  },
+  "camera": {
+    "present": true,
+    "sensor": "OV02C10",
+    "sensor_pid": "0x5602",
+    "sccb_addr": "0x36",
+    "interface": "mipi-csi",
+    "hflip": true,
+    "hflip_note": "copied from the 4.3 inch; verify",
+    "factory_mode": "1920x1080"
+  },
+  "sdcard": {
+    "present": true,
+    "bus": "sdmmc-4bit",
+    "pins": {
+      "d0": 39,
+      "d1": 40,
+      "d2": 41,
+      "d3": 42,
+      "cmd": 44,
+      "clk": 43
+    },
+    "power_ldo": {
+      "channel": 4,
+      "mv": 3300
+    },
+    "note": "Factory firmware fails with sdmmc_init_ocr 0x107, same LDO channel 4 cause as the 4.3 inch; a community report of GPIO conflicts is unverified"
+  },
+  "battery": {
+    "connector": "lithium battery interface circuit (Y1 variant ships with the cell)",
+    "charger": "IP5306 (community-reported)",
+    "adc_gpio": 52,
+    "divider_ratio_inverse": 1.68,
+    "cell_mv_empty": 3300,
+    "cell_mv_full": 4200,
+    "pin_mv_observed": {
+      "low": 1800,
+      "full": 2430
+    }
+  },
+  "rtc": {
+    "present": true,
+    "chip": "RX8025T on the shared I2C bus, CR1220 backup cell",
+    "source": "schematic sheet 7_CODEC / 4_CONN"
+  },
+  "usb": {
+    "sockets": 3,
+    "usb1": "CH340C USB-UART on UART0 (GPIO37/38) with DTR/RTS auto-boot (vendor 'USB1' for flashing)",
+    "usb2": "ESP32-P4 full-speed OTG",
+    "usb3": "ESP32-P4 high-speed OTG + USB-Serial/JTAG (COM4 on the author's PC)",
+    "serial_jtag": true,
+    "host_hs": true,
+    "source": "schematic sheet 6_USB (p1ngb4ck repo), read 2026-10-03; physical labelling to be confirmed"
+  },
+  "console_uart": {
+    "tx": 37,
+    "rx": 38,
+    "header": "4-pin UART header (GND, 3V3, TX, RX)"
+  },
+  "ui": {
+    "landscape_w": 1280,
+    "landscape_h": 800,
+    "scale_q8": 410,
+    "draw_buf_lines": 160,
+    "fonts": {
+      "hh": "dangrek_780",
+      "mm": "dangrek_360",
+      "body": "montserrat_24",
+      "label": "montserrat_32",
+      "title": "montserrat_44",
+      "icon": "app_icons_44"
+    },
+    "fonts_note": "assets to be generated with tools/fonts/gen_fonts.sh in phase 3"
+  },
+  "features": [
+    "display",
+    "touch",
+    "wifi",
+    "ble",
+    "audio_out",
+    "audio_in",
+    "builtin_speaker",
+    "camera",
+    "sdcard",
+    "usb_host",
+    "battery_adc",
+    "rtc"
+  ],
+  "revisions": [
+    {
+      "id": "V1",
+      "how_to_tell": "rear label 2627 or lower",
+      "panel": "JD9365 table A: DPI 60 MHz, ESPHome 1 Gbps",
+      "source": "EspControl device page"
+    },
+    {
+      "id": "V2",
+      "how_to_tell": "rear label 2628 or higher",
+      "panel": "different LCD glass, same JD9365: DPI 70 MHz, different init table (ESPHome JC8012P4A1-V2)",
+      "source": "EspControl device page, ESPHome guition.py"
+    },
+    {
+      "id": "V3",
+      "how_to_tell": "ESP32-P4 v3.x production silicon (esptool)",
+      "panel": "as V2",
+      "source": "EspControl device page; issue jtenniswood/espcontrol#1939 (label 2635/101533001-V3)"
+    }
+  ],
+  "status": {
+    "verified_on": "2026-10-02",
+    "verified_how": "esptool chip_id/flash_id on COM4 + factory boot log (devices/guition-jc8012p4a1c/logs/factory-boot-2026-10-02.txt)",
+    "this_unit": {
+      "silicon": "ESP32-P4 rev v1.3 (so not V3)",
+      "rear_label": "V2 range (2628 or higher), read 2026-10-03; exact number not recorded",
+      "factory_firmware": "esp_brookesia_demo 1.0.1, IDF v5.5.4-dirty, built 2026-07-03"
+    },
+    "runs": [
+      "bedside_clock (src/bedside_clock, mww build) since 2026-10-03; factory esp_brookesia_demo before that"
+    ],
+    "host_com_port_on_author_pc": "COM4"
+  },
+  "sources": {
+    "vendor_bsp_timing": "devices/guition-jc8012p4a1c/vendor/INVENTORY.md (esp-bsp esp32_p4_function_ev_board 4.1.1 vendor fork, lane_bit_rate_mbps = 1500, JD9365_800_1280_PANEL_60HZ_DPI_CONFIG)",
+    "pins": "vendor BSP headers via INVENTORY.md; EspControl devices/guition-esp32-p4-jc8012p4a1{,-v2}/device/device.yaml; ESPHome mipi_dsi/models/guition.py and gsl3670/touchscreen.py",
+    "spec_pdf": "https://www.guition.com/-download (JC8012P4A1C_I_W Specifications-EN-v1.1(2).pdf)",
+    "vendor_package": "https://pan.jczn1688.com/directlink/1/HMI%20display/JC8012P4A1C_I_W_Y.zip (sharded; see vendor/README.md)",
+    "mirror": "https://github.com/DevinWatson/10.1-inch-ESP32P4-Xiaozhi-ESP32-C6-JC8012P4A1C_I_W_Y (commit 84e7c96)",
+    "schematics": "https://github.com/p1ngb4ck/unofficial_guition_esp32p4_repo (JC8012P4A1C_I_W_Y, posted with Guition's permission)",
+    "revisions": "https://jtenniswood.github.io/espcontrol/screens/jc8012p4a1",
+    "touch_driver": "https://components.espressif.com/components/mangoo1/esp_lcd_touch_gsl3680"
+  },
+  "other": {
+    "ws2812_gpio": 26,
+    "ws2812_note": "LED1 on GPIO26 per schematic; fitted? unverified",
+    "shared_ldo_vo4": "TF card and camera supply both on LDO channel 4"
+  }
+}

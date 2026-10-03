@@ -1,0 +1,845 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" href="data:,">
+<title>Bedside</title>
+<style>
+:root {
+  --bg: #0e1114; --card: #171c22; --edge: #232a33;
+  --fg: #d8dee6; --muted: #8a93a0; --accent: #3f7fb5; --accent2: #2c5f8a;
+  --good: #7fd08a; --bad: #ff6b6b; --warn: #e8b04c;
+}
+* { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+body {
+  margin: 0; background: var(--bg); color: var(--fg);
+  font: 16px/1.45 system-ui, -apple-system, "Segoe UI", sans-serif;
+  max-width: 560px; margin-inline: auto; padding: 12px 12px 40px;
+}
+.card {
+  background: var(--card); border: 1px solid var(--edge);
+  border-radius: 14px; padding: 14px 16px; margin-bottom: 12px;
+}
+h2 { font-size: 13px; text-transform: uppercase; letter-spacing: .08em;
+     color: var(--muted); margin: 0 0 10px; font-weight: 600; }
+#clock { font-size: 46px; font-weight: 700; letter-spacing: .02em;
+         font-variant-numeric: tabular-nums; }
+#clockdate { color: var(--muted); margin-top: -4px; }
+.meta { color: var(--muted); font-size: 13px; margin-top: 8px; }
+#dot { display: inline-block; width: 10px; height: 10px; border-radius: 50%;
+       background: var(--bad); margin-right: 7px; vertical-align: baseline; }
+#dot.on { background: var(--good); }
+.row { display: flex; gap: 8px; align-items: center; }
+.grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+button {
+  background: var(--accent2); color: var(--fg); border: 0; border-radius: 10px;
+  min-height: 48px; font-size: 16px; font-weight: 600; cursor: pointer;
+  padding: 0 12px;
+}
+button:active { filter: brightness(1.25); }
+button:disabled { opacity: .35; cursor: default; }
+button.ghost { background: #222a33; }
+button.step { min-width: 48px; flex: 0 0 auto; font-size: 20px; }
+#banner { display: none; background: #4a1f1f; border-color: #7a3030; }
+#banner.show { display: block; }
+#banner .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+#banner button { min-height: 64px; font-size: 20px; background: #a04040; }
+#np-title { font-size: 19px; font-weight: 700; overflow: hidden;
+            text-overflow: ellipsis; white-space: nowrap; }
+#np-artist { color: var(--muted); margin-bottom: 4px; }
+#np-status { color: var(--muted); font-size: 13px; min-height: 1.2em;
+             overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+input[type=text], input[type=password], input[type=number], input[type=time], select {
+  width: 100%; background: #10151a; color: var(--fg);
+  border: 1px solid var(--edge); border-radius: 10px;
+  min-height: 46px; padding: 8px 12px; font-size: 16px;
+}
+input[type=range] { width: 100%; accent-color: var(--accent); height: 34px; }
+label.field { display: block; margin: 10px 0 0; color: var(--muted); font-size: 13px; }
+label.check { display: flex; align-items: center; gap: 10px; margin: 12px 0 0;
+              font-size: 16px; color: var(--fg); }
+input[type=checkbox] { width: 22px; height: 22px; accent-color: var(--accent); }
+details summary { cursor: pointer; font-size: 15px; font-weight: 600;
+                  color: var(--muted); padding: 4px 0; }
+.slider-block { margin-top: 8px; }
+.slider-head { display: flex; justify-content: space-between;
+               color: var(--muted); font-size: 13px; }
+.slider-head b { color: var(--fg); font-variant-numeric: tabular-nums; }
+.seg { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px;
+       background: #10151a; border: 1px solid var(--edge); border-radius: 12px;
+       padding: 4px; margin-top: 12px; }
+.seg button { min-height: 40px; background: transparent; color: var(--muted);
+              font-size: 15px; border-radius: 9px; }
+.seg button.on { background: var(--accent2); color: var(--fg); }
+/* alarms block: one group per alarm - header line, 7 day toggles, presets */
+.alarm { border-top: 1px solid var(--edge); padding-top: 4px; margin-top: 10px; }
+.alarm label.check { margin-top: 6px; }
+.alarm label.check input[type=time] { flex: 1; min-width: 0; margin-left: auto;
+                                      max-width: 150px; }
+.seg.days { grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 4px; padding: 0;
+            background: none; border: 0; margin-top: 8px; }
+.seg.days button { min-height: 44px; font-size: 13px; border: 1px solid var(--edge);
+                   padding: 0 2px; min-width: 0; }
+.presets { display: flex; gap: 6px; margin-top: 6px; }
+.presets button { flex: 1; min-height: 36px; font-size: 12px; font-weight: 500;
+                  padding: 0 4px; }
+.presets button.on { background: var(--accent2); }
+#banner-sub { color: #e6c4c4; font-size: 14px; margin: -6px 0 10px; min-height: 1.2em; }
+#results { margin-top: 8px; display: flex; flex-direction: column; gap: 6px; }
+.rowbtn { display: flex; align-items: center; gap: 10px; width: 100%;
+          background: #10151a; border: 1px solid var(--edge); border-radius: 10px;
+          min-height: 48px; padding: 8px 12px; text-align: left; font-weight: 500;
+          color: var(--fg); }
+.rowbtn:active { background: var(--accent2); }
+.rowbtn .t { flex: 1; min-width: 0; }
+.rowbtn .t1 { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.rowbtn .t2 { color: var(--muted); font-size: 13px; font-weight: 400;
+              overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.rowbtn .dur { color: var(--muted); font-size: 13px; font-variant-numeric: tabular-nums; }
+#results-note { color: var(--muted); font-size: 13px; padding: 6px 2px; }
+#toast {
+  position: fixed; left: 50%; bottom: 18px; transform: translateX(-50%);
+  background: #2c333c; color: var(--fg); border: 1px solid var(--edge);
+  padding: 10px 18px; border-radius: 10px; font-size: 14px;
+  opacity: 0; transition: opacity .25s; pointer-events: none; max-width: 90vw;
+}
+#toast.show { opacity: 1; }
+#toast.err { background: #4a2424; border-color: #7a3030; }
+#keymodal {
+  display: none; position: fixed; inset: 0; background: rgba(0,0,0,.75);
+  z-index: 10; align-items: center; justify-content: center; padding: 20px;
+}
+#keymodal.show { display: flex; }
+#keymodal .card { width: 100%; max-width: 380px; margin: 0; }
+body.offline .controls button, body.offline .controls input,
+body.offline .controls select { opacity: .4; pointer-events: none; }
+#offline-note { display: none; color: var(--bad); font-size: 13px; margin-top: 6px; }
+body.offline #offline-note { display: block; }
+</style>
+</head>
+<body>
+
+<div class="card">
+  <div id="clock">--:--</div>
+  <div id="clockdate"></div>
+  <div class="meta"><span id="dot"></span><span id="netinfo">connecting…</span></div>
+  <div class="meta" id="alarmline"></div>
+  <div class="meta" id="heapline"></div>
+  <div id="offline-note">Device unreachable — retrying…</div>
+</div>
+
+<div class="card" id="banner">
+  <h2 id="banner-title">Alarm ringing</h2>
+  <div id="banner-sub"></div>
+  <div class="grid2">
+    <button id="btn-snooze">Snooze</button>
+    <button id="btn-dismiss">Dismiss</button>
+  </div>
+</div>
+
+<div class="card controls">
+  <h2>Now playing</h2>
+  <div id="np-title">&nbsp;</div>
+  <div id="np-artist">&nbsp;</div>
+  <div id="np-status"></div>
+  <div class="grid" style="margin-top:10px">
+    <button id="btn-prev">&#9198;</button>
+    <button id="btn-pause">&#9199;</button>
+    <button id="btn-next">&#9197;</button>
+    <button id="btn-stop">&#9209;</button>
+  </div>
+  <div class="seg" id="mode">
+    <button data-mode="song" class="on">Song</button>
+    <button data-mode="playlist">Playlist</button>
+    <button data-mode="random">Random</button>
+  </div>
+  <div class="row" style="margin-top:10px" id="queryrow">
+    <input type="text" id="query" placeholder="search songs…" autocomplete="off">
+    <button id="btn-go" style="flex:0 0 auto;min-width:72px">Go</button>
+  </div>
+  <div id="results-note"></div>
+  <div id="results"></div>
+</div>
+
+<div class="card controls">
+  <h2>Controls</h2>
+  <div class="slider-block">
+    <div class="slider-head"><span>Volume</span><b id="vol-val">–</b></div>
+    <div class="row">
+      <button class="step ghost" id="vol-down">&minus;</button>
+      <input type="range" id="vol" min="0" max="100" step="1">
+      <button class="step ghost" id="vol-up">+</button>
+    </div>
+  </div>
+  <div class="slider-block">
+    <div class="slider-head"><span>Brightness</span><b id="bri-val">–</b></div>
+    <div class="row">
+      <button class="step ghost" id="bri-down">&minus;</button>
+      <input type="range" id="bri" min="1" max="100" step="1">
+      <button class="step ghost" id="bri-up">+</button>
+    </div>
+  </div>
+</div>
+
+<div class="card controls">
+  <details id="settings">
+    <summary>Settings</summary>
+    <div id="settings-body">
+      <div id="alarms"></div>
+      <label class="field">Stop ringing after (if nobody dismisses it)
+        <select id="s-max_alarm_seconds">
+          <option value="60">1 minute</option>
+          <option value="120">2 minutes</option>
+          <option value="300">5 minutes</option>
+          <option value="600">10 minutes</option>
+          <option value="900">15 minutes</option>
+          <option value="1800">30 minutes</option>
+          <option value="3600">1 hour</option>
+          <option value="7200">2 hours</option>
+          <option value="0">Never (ring until dismissed)</option>
+        </select></label>
+      <label class="field">Alarm mode
+        <select id="s-alarm_mode"><option value="0">Beep</option><option value="1">Playlist</option></select></label>
+      <label class="field">Alarm volume (0–100)
+        <input type="number" id="s-alarm_volume" min="0" max="100"></label>
+      <label class="field">Media volume (0–100)
+        <input type="number" id="s-volume" min="0" max="100"></label>
+      <label class="field">Brightness night floor (1–100)
+        <input type="number" id="s-bright_min" min="1" max="100"></label>
+      <label class="field">Brightness day ceiling (1–100)
+        <input type="number" id="s-bright_max" min="1" max="100"></label>
+      <label class="field">Light sample interval (seconds, 2–300)
+        <input type="number" id="s-ambient_period_s" min="2" max="300"></label>
+      <label class="field">Timezone offset (minutes east of UTC)
+        <input type="number" id="s-tz_offset_min" min="-720" max="840" step="15"></label>
+      <label class="field">Clock face
+        <select id="s-clock_face"><option value="0">Large digital</option><option value="1">Giant digital</option></select></label>
+      <label class="field">Orientation
+        <select id="s-orientation"><option value="0">Landscape</option><option value="1">Landscape (flipped)</option><option value="2">Portrait</option></select></label>
+      <label class="check"><input type="checkbox" id="s-voice_enabled"> Voice control</label>
+      <label class="field">Wake word (models built into the firmware)
+        <select id="s-voice_wake_word"></select></label>
+      <label class="field">Mic gain (dB, 0–42, steps of 6)
+        <input type="number" id="s-voice_mic_gain" min="0" max="42" step="6"></label>
+      <label class="field">Wake threshold (%, 40–99; lower = wakes more easily)
+        <input type="number" id="s-voice_wake_thr" min="40" max="99"></label>
+      <label class="check"><input type="checkbox" id="s-voice_wake_verify"> AI server confirms each wake (whisper)</label>
+      <label class="check"><input type="checkbox" id="s-voice_wake_collect"> Keep wake clips in RAM (/api/v1/voice/clips)</label>
+      <label class="field">Server check interval (music &amp; AI indicators)
+        <select id="s-svc_poll_s">
+          <option value="30">Every 30 s</option>
+          <option value="60">Every minute</option>
+          <option value="300">Every 5 minutes</option>
+          <option value="900">Every 15 minutes</option>
+          <option value="0">Off (indicator shows last real call)</option>
+        </select></label>
+      <div class="row" style="margin-top:14px">
+        <button id="btn-save" style="flex:1">Save</button>
+        <button id="btn-reload" class="ghost" style="flex:1">Reload</button>
+      </div>
+    </div>
+  </details>
+</div>
+
+<div class="card controls">
+  <details id="events">
+    <summary>Events (alarm, reboots, WiFi)</summary>
+    <div id="events-body" style="font-family:ui-monospace,Menlo,Consolas,monospace;font-size:12px;line-height:1.5;color:var(--muted);white-space:pre-wrap;margin-top:8px">Loading…</div>
+    <div class="row" style="margin-top:10px">
+      <button id="btn-events" class="ghost" style="flex:1">Refresh</button>
+      <button id="btn-devlog" class="ghost" style="flex:1">Device log</button>
+    </div>
+  </details>
+</div>
+
+<div id="keymodal">
+  <div class="card">
+    <h2>API key</h2>
+    <p style="color:var(--muted);font-size:14px;margin-top:0">
+      Enter the key from Settings &rarr; API on the device.</p>
+    <input type="password" id="keyinput" placeholder="API key" autocomplete="off">
+    <button id="keysubmit" style="width:100%;margin-top:12px">Connect</button>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+'use strict';
+const $ = id => document.getElementById(id);
+const POLL_MS = 3000;
+
+/* ---------- toast ---------- */
+let toastTimer = null;
+function toast(msg, isErr) {
+  const t = $('toast');
+  t.textContent = msg;
+  t.className = 'show' + (isErr ? ' err' : '');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => { t.className = ''; }, 2500);
+}
+
+/* ---------- API key ---------- */
+function showKeyModal() {
+  $('keymodal').classList.add('show');
+  $('keyinput').focus();
+}
+$('keysubmit').addEventListener('click', () => {
+  const k = $('keyinput').value.trim();
+  if (!k) return;
+  localStorage.setItem('apiKey', k);
+  $('keyinput').value = '';
+  $('keymodal').classList.remove('show');
+  poll(true);
+});
+$('keyinput').addEventListener('keydown', e => {
+  if (e.key === 'Enter') $('keysubmit').click();
+});
+
+/* ---------- fetch wrapper ---------- */
+async function api(path, opts = {}) {
+  opts.headers = Object.assign({ 'X-Api-Key': localStorage.getItem('apiKey') || '' },
+                               opts.headers);
+  opts.signal = AbortSignal.timeout(5000);
+  const r = await fetch(path, opts);
+  if (r.status === 401) {
+    localStorage.removeItem('apiKey');
+    showKeyModal();
+    throw new Error('unauthorized');
+  }
+  const body = await r.json().catch(() => ({}));
+  if (!r.ok) {
+    toast(body.error || ('HTTP ' + r.status), true);
+    throw new Error(body.error || r.status);
+  }
+  return body;
+}
+const post = (path, obj) => api(path, {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify(obj),
+});
+
+/* ---------- status polling ---------- */
+let inFlight = false;
+let pollTimer = null;
+let volDragging = false, briDragging = false;
+
+function setOnline(on) {
+  $('dot').className = on ? 'on' : '';
+  document.body.classList.toggle('offline', !on);
+}
+
+const pad2 = n => String(n).padStart(2, '0');
+const fmtMS = s => Math.floor(s / 60) + ':' + pad2(s % 60);
+const WDAY = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+
+/* Device-local wall time for a device epoch: the phone's timezone is not the
+ * clock's, so derive the offset from the status' own epoch/local pair. */
+function devLocal(epoch, s) {
+  const m = /^(\d+)-(\d+)-(\d+) (\d+):(\d+):(\d+)$/.exec(s.time.local || '');
+  const asUtc = m ? Date.UTC(+m[1], m[2] - 1, +m[3], +m[4], +m[5], +m[6]) / 1000 : s.time.epoch;
+  const d = new Date((epoch + (asUtc - s.time.epoch)) * 1000);
+  return { hh: d.getUTCHours(), mm: d.getUTCMinutes(), wday: d.getUTCDay(),
+           ymd: d.getUTCFullYear() * 400 + d.getUTCMonth() * 32 + d.getUTCDate() };
+}
+
+function alarmLine(s) {
+  const a = s.alarm;
+  let line;
+  if (a.ringing) {
+    line = `Alarm ${a.ringing_index} ringing`;
+  } else if (a.next) {
+    const n = devLocal(a.next.epoch, s), today = devLocal(s.time.epoch, s);
+    const hm = pad2(n.hh) + ':' + pad2(n.mm);
+    const when = n.ymd === today.ymd ? 'today'
+               : a.next.in_s < 2 * 86400 && (n.wday === (today.wday + 1) % 7) ? 'tomorrow'
+               : WDAY[n.wday];
+    line = a.next.snooze ? `Snoozing until ${hm} (Alarm ${a.next.index})`
+                         : `Next alarm: ${hm} ${when} (Alarm ${a.next.index})`;
+  } else {
+    line = a.enabled ? 'Alarms: none scheduled' : 'Alarms: off';
+  }
+  if (a.missed && !a.ringing) {
+    const m = devLocal(a.missed.epoch, s);
+    line += ` · Missed: Alarm ${a.missed.index} at ${pad2(m.hh)}:${pad2(m.mm)}`;
+  }
+  return line;
+}
+
+function renderStatus(s) {
+  const [d, t] = (s.time.local || ' ').split(' ');
+  $('clock').textContent = s.time.valid ? (t || '').slice(0, 5) : '--:--';
+  $('clockdate').textContent = s.time.valid ? d : 'time not synced';
+  $('netinfo').textContent = s.wifi.connected
+    ? `${s.wifi.ssid} · ${s.wifi.ip}` : 'WiFi down';
+  $('alarmline').textContent = alarmLine(s);
+  $('heapline').textContent =
+    `heap ${(s.heap.internal_free / 1024).toFixed(0)}K · psram ${(s.heap.psram_free / 1048576).toFixed(1)}M`;
+  $('banner').classList.toggle('show', !!s.alarm.ringing);
+  if (s.alarm.ringing) {
+    $('banner-title').textContent = `Alarm ${s.alarm.ringing_index || ''} ringing`.replace('  ', ' ');
+    $('banner-sub').textContent = s.alarm.remaining_s > 0
+      ? 'stops by itself in ' + fmtMS(s.alarm.remaining_s) : '';
+  }
+
+  $('np-title').textContent = s.playback.title || '—';
+  $('np-artist').textContent = s.playback.artist || '';
+  $('np-status').textContent = s.playback.status || s.playback.state;
+  $('btn-pause').innerHTML = s.playback.state === 'paused' ? '&#9654;' : '&#9208;';
+  const active = s.playback.state === 'playing' || s.playback.state === 'paused';
+  ['btn-pause', 'btn-next', 'btn-prev'].forEach(id => { $(id).disabled = !active; });
+  $('btn-stop').disabled = s.playback.state === 'idle';
+
+  if (!volDragging) { $('vol').value = s.volume; $('vol-val').textContent = s.volume; }
+}
+
+async function poll(immediate) {
+  if (inFlight) return;
+  if (!localStorage.getItem('apiKey')) { showKeyModal(); return; }
+  inFlight = true;
+  try {
+    const s = await api('/api/v1/status');
+    renderStatus(s);
+    setOnline(true);
+  } catch (e) {
+    if (e.message !== 'unauthorized') setOnline(false);
+  } finally {
+    inFlight = false;
+  }
+}
+function startPolling() {
+  clearInterval(pollTimer);
+  pollTimer = setInterval(poll, POLL_MS);
+  poll(true);
+}
+document.addEventListener('visibilitychange', () => {
+  if (document.hidden) clearInterval(pollTimer);
+  else startPolling();
+});
+
+/* re-fetch shortly after an action (music commands settle asynchronously) */
+const pollSoon = () => setTimeout(poll, 700);
+
+/* ---------- playback actions ---------- */
+const pb = action => post('/api/v1/playback', { action }).then(pollSoon).catch(() => {});
+$('btn-pause').addEventListener('click', () => pb('pause'));
+$('btn-next').addEventListener('click', () => pb('next'));
+$('btn-prev').addEventListener('click', () => pb('prev'));
+$('btn-stop').addEventListener('click', () => pb('stop'));
+/* ---------- picker: Song | Playlist | Random ----------
+ * Song: typing searches the server (debounced) and lists the top 10; Go runs
+ * the same search-and-play matching voice uses; tapping a row plays exactly
+ * that song. Playlist: the full list is fetched once (uncapped) and filtered
+ * locally as you type; Go = matched play, row = exact play. Random: just Go. */
+const SHOW_MAX = 10;
+let mode = 'song';
+let playlistCache = null;      /* [{id,name,song_count,duration}] once loaded */
+let searchSeq = 0;             /* drop stale search responses */
+let searchDeb = null;
+
+const fmtDur = s => s > 0 ? Math.floor(s / 60) + ':' + String(s % 60).padStart(2, '0') : '';
+
+function rowButton(t1, t2, dur, onClick) {
+  const b = document.createElement('button');
+  b.className = 'rowbtn';
+  const t = document.createElement('div'); t.className = 't';
+  const a = document.createElement('div'); a.className = 't1'; a.textContent = t1;
+  t.appendChild(a);
+  if (t2) { const c = document.createElement('div'); c.className = 't2'; c.textContent = t2; t.appendChild(c); }
+  b.appendChild(t);
+  if (dur) { const d = document.createElement('span'); d.className = 'dur'; d.textContent = dur; b.appendChild(d); }
+  b.addEventListener('click', onClick);
+  return b;
+}
+function setResults(nodes, note) {
+  const r = $('results'); r.replaceChildren(...nodes);
+  $('results-note').textContent = note || '';
+}
+
+function playExact(body, label) {
+  post('/api/v1/playback', body)
+    .then(() => { toast('Playing: ' + label); pollSoon(); }).catch(() => {});
+}
+
+function renderSongs(items, q) {
+  if (!items.length) { setResults([], `No songs match "${q}"`); return; }
+  setResults(items.slice(0, SHOW_MAX).map(s =>
+    rowButton(s.title, s.artist, fmtDur(s.duration), () =>
+      playExact({ action: 'play_song_id', id: s.id, title: s.title, artist: s.artist }, s.title))),
+    `Top ${Math.min(items.length, SHOW_MAX)} — tap to play, or Go for best match`);
+}
+async function searchSongs() {
+  const q = $('query').value.trim();
+  if (q.length < 2) { setResults([], q ? 'Keep typing…' : 'Type to search your library'); return; }
+  const seq = ++searchSeq;
+  $('results-note').textContent = 'Searching…';
+  try {
+    const r = await api('/api/v1/songs?q=' + encodeURIComponent(q) + '&limit=' + SHOW_MAX);
+    if (seq !== searchSeq) return;          /* a newer search superseded this */
+    renderSongs(r.items || [], q);
+  } catch (e) { if (seq === searchSeq) setResults([], 'Search failed'); }
+}
+
+function renderPlaylists() {
+  if (playlistCache === null) return;
+  const q = $('query').value.trim().toLowerCase();
+  const hits = q ? playlistCache.filter(p => p.name.toLowerCase().includes(q)) : playlistCache;
+  if (!hits.length) { setResults([], q ? `No playlists match "${q}"` : 'No playlists on the server'); return; }
+  /* every playlist, no cap: there are never many (songs are the big set) */
+  setResults(hits.map(p =>
+    rowButton(p.name, `${p.song_count} songs`, fmtDur(p.duration), () =>
+      playExact({ action: 'play_playlist_id', id: p.id, name: p.name }, p.name))),
+    `${hits.length} playlist${hits.length === 1 ? '' : 's'} — tap to play`);
+}
+async function loadPlaylists() {
+  $('results-note').textContent = 'Loading playlists…';
+  try {
+    const r = await api('/api/v1/playlists');
+    playlistCache = r.items || [];
+    renderPlaylists();
+  } catch (e) { setResults([], 'Could not load playlists'); }
+}
+
+function setMode(m) {
+  mode = m;
+  document.querySelectorAll('#mode button').forEach(b =>
+    b.classList.toggle('on', b.dataset.mode === m));
+  $('queryrow').style.display = m === 'random' ? 'none' : '';
+  $('query').placeholder = m === 'song' ? 'search songs…' : 'filter playlists…';
+  clearTimeout(searchDeb);
+  if (m === 'song') { setResults([], ''); searchSongs(); }
+  else if (m === 'playlist') { playlistCache === null ? loadPlaylists() : renderPlaylists(); }
+  else {
+    setResults([], '');
+    const b = rowButton('Play random songs', 'shuffles the whole library', '', () =>
+      playExact({ action: 'play_random' }, 'random'));
+    setResults([b], '');
+  }
+}
+$('mode').addEventListener('click', e => {
+  const b = e.target.closest('button[data-mode]');
+  if (b) setMode(b.dataset.mode);
+});
+
+$('query').addEventListener('input', () => {
+  clearTimeout(searchDeb);
+  if (mode === 'song') searchDeb = setTimeout(searchSongs, 350);
+  else if (mode === 'playlist') renderPlaylists();
+});
+$('query').addEventListener('keydown', e => { if (e.key === 'Enter') $('btn-go').click(); });
+
+/* Go = the standard matched play (same logic as voice) */
+$('btn-go').addEventListener('click', () => {
+  const q = $('query').value.trim();
+  if (mode === 'song') {
+    if (!q) return;
+    post('/api/v1/playback', { action: 'play', query: q })
+      .then(() => { toast('Finding: ' + q); pollSoon(); }).catch(() => {});
+  } else if (mode === 'playlist') {
+    if (!q) return;
+    post('/api/v1/playback', { action: 'play_playlist', query: q })
+      .then(() => { toast('Finding playlist: ' + q); pollSoon(); }).catch(() => {});
+  }
+});
+setMode('song');
+
+/* ---------- alarm banner ---------- */
+const ctl = obj => post('/api/v1/controls', obj).then(pollSoon).catch(() => {});
+$('btn-snooze').addEventListener('click', () => ctl({ action: 'snooze' }));
+$('btn-dismiss').addEventListener('click', () => ctl({ action: 'dismiss' }));
+
+/* ---------- sliders (debounced; polls don't fight an active drag) ---------- */
+function wireSlider(slider, valEl, key, setDrag) {
+  let deb = null;
+  slider.addEventListener('input', () => {
+    setDrag(true);
+    valEl.textContent = slider.value;
+    clearTimeout(deb);
+    deb = setTimeout(() => {
+      post('/api/v1/controls', { [key]: Number(slider.value) })
+        .then(r => { valEl.textContent = r[key]; slider.value = r[key]; })
+        .catch(() => {})
+        .finally(() => setDrag(false));
+    }, 250);
+  });
+}
+wireSlider($('vol'), $('vol-val'), 'volume', v => { volDragging = v; });
+wireSlider($('bri'), $('bri-val'), 'brightness', v => { briDragging = v; });
+$('vol-up').addEventListener('click', () =>
+  ctl({ action: 'volume_up' }));
+$('vol-down').addEventListener('click', () =>
+  ctl({ action: 'volume_down' }));
+$('bri-up').addEventListener('click', () =>
+  post('/api/v1/controls', { action: 'brightness_up' })
+    .then(r => { $('bri').value = r.brightness; $('bri-val').textContent = r.brightness; })
+    .catch(() => {}));
+$('bri-down').addEventListener('click', () =>
+  post('/api/v1/controls', { action: 'brightness_down' })
+    .then(r => { $('bri').value = r.brightness; $('bri-val').textContent = r.brightness; })
+    .catch(() => {}));
+
+/* ---------- settings panel ---------- */
+const ALARM_N = 3;
+const ALARM_KEYS = [];
+for (let n = 1; n <= ALARM_N; n++) {
+  ALARM_KEYS.push(`alarm${n}_enabled`, `alarm${n}_hh`, `alarm${n}_mm`, `alarm${n}_days`);
+}
+const S_FIELDS = [...ALARM_KEYS, 'max_alarm_seconds', 'alarm_mode',
+  'alarm_volume', 'volume', 'bright_min', 'bright_max', 'ambient_period_s',
+  'tz_offset_min', 'clock_face', 'orientation', 'voice_enabled', 'voice_mic_gain',
+  'voice_wake_thr', 'voice_wake_verify', 'voice_wake_collect', 'voice_wake_word',
+  'svc_poll_s'];
+let baseline = null; /* last-loaded settings snapshot for diffing */
+
+/* A select lists the common choices; a value set through the API that
+ * matches none of them gets its own option so Save never changes it. */
+function setSelectWithCustom(sel, v, label) {
+  if (![...sel.options].some(o => Number(o.value) === Number(v))) {
+    const o = document.createElement('option');
+    o.value = v; o.textContent = label;
+    sel.appendChild(o);
+  }
+  sel.value = v;
+}
+const setPollSelect = v => setSelectWithCustom($('s-svc_poll_s'), v, 'Every ' + v + ' s (custom)');
+
+/* --- alarms: three groups built once; days = weekday bitmask, bit0 Sunday,
+ * shown Monday-first; bit 7 = "once" (ring at the next matching time, then
+ * switch off). An empty weekday set is not allowed - the last lit day
+ * refuses to go out, matching what the device stores. --- */
+const DAY_COLS = [[1, 'Mo'], [2, 'Tu'], [3, 'We'], [4, 'Th'], [5, 'Fr'], [6, 'Sa'], [0, 'Su']];
+const PRESETS = [[127, 'Every day'], [62, 'Weekdays'], [65, 'Weekends'], [255, 'Once']];
+const ONCE = 128;
+
+function buildAlarmRows() {
+  const box = $('alarms');
+  for (let n = 1; n <= ALARM_N; n++) {
+    const g = document.createElement('div'); g.className = 'alarm'; g.dataset.n = n; g.dataset.once = '0';
+    const lab = document.createElement('label'); lab.className = 'check';
+    const cb = document.createElement('input'); cb.type = 'checkbox'; cb.id = `s-alarm${n}_enabled`;
+    lab.appendChild(cb);
+    lab.appendChild(document.createTextNode(`Alarm ${n}`));
+    const t = document.createElement('input'); t.type = 'time'; t.id = `s-alarm${n}_time`; t.step = 60;
+    lab.appendChild(t);
+    g.appendChild(lab);
+    const days = document.createElement('div'); days.className = 'seg days'; days.id = `s-alarm${n}_days`;
+    for (const [wd, txt] of DAY_COLS) {
+      const b = document.createElement('button'); b.type = 'button'; b.dataset.wd = wd; b.textContent = txt;
+      days.appendChild(b);
+    }
+    g.appendChild(days);
+    const pr = document.createElement('div'); pr.className = 'presets';
+    for (const [m, txt] of PRESETS) {
+      const b = document.createElement('button'); b.type = 'button'; b.className = 'ghost';
+      b.dataset.mask = m; b.textContent = txt;
+      pr.appendChild(b);
+    }
+    g.appendChild(pr);
+    box.appendChild(g);
+  }
+  box.addEventListener('click', e => {
+    const b = e.target.closest('button');
+    if (!b) return;
+    const g = b.closest('.alarm');
+    if (b.dataset.wd !== undefined) {
+      b.classList.toggle('on');
+      if (!g.querySelector('.days button.on')) b.classList.add('on'); /* keep one day */
+      refreshPresets(g);
+    } else if (b.dataset.mask !== undefined) {
+      const m = Number(b.dataset.mask);
+      if (m === 255 && g.dataset.once === '1') setDays(g.dataset.n, getDays(g.dataset.n) & 127); /* Once again = off */
+      else setDays(g.dataset.n, m);
+    }
+  });
+}
+function alarmGroup(n) { return $(`s-alarm${n}_days`).closest('.alarm'); }
+function setDays(n, mask) {
+  const g = alarmGroup(n);
+  let wd = mask & 127;
+  if (wd === 0) wd = 127;
+  g.querySelectorAll('.days button').forEach(b => b.classList.toggle('on', ((wd >> b.dataset.wd) & 1) === 1));
+  g.dataset.once = (mask & ONCE) ? '1' : '0';
+  refreshPresets(g);
+}
+function getDays(n) {
+  const g = alarmGroup(n);
+  let m = 0;
+  g.querySelectorAll('.days button.on').forEach(b => { m |= 1 << Number(b.dataset.wd); });
+  if (m === 0) m = 127;
+  if (g.dataset.once === '1') m |= ONCE;
+  return m;
+}
+function refreshPresets(g) {
+  const cur = getDays(g.dataset.n), once = (cur & ONCE) !== 0, wd = cur & 127;
+  g.querySelectorAll('.presets button').forEach(b => {
+    const m = Number(b.dataset.mask);
+    b.classList.toggle('on', m === 255 ? once : (!once && m === wd));
+  });
+}
+buildAlarmRows();
+
+const maxRingLabel = v => v % 60 === 0 ? `${v / 60} minutes (custom)` : `${v} seconds (custom)`;
+
+function settingsToForm(s) {
+  for (let n = 1; n <= ALARM_N; n++) {
+    $(`s-alarm${n}_enabled`).checked = !!s[`alarm${n}_enabled`];
+    $(`s-alarm${n}_time`).value = pad2(s[`alarm${n}_hh`]) + ':' + pad2(s[`alarm${n}_mm`]);
+    setDays(n, s[`alarm${n}_days`] === undefined ? 127 : s[`alarm${n}_days`]);
+  }
+  setSelectWithCustom($('s-max_alarm_seconds'),
+    s.max_alarm_seconds === undefined ? 600 : s.max_alarm_seconds, maxRingLabel(s.max_alarm_seconds));
+  $('s-alarm_mode').value = s.alarm_mode;
+  $('s-alarm_volume').value = s.alarm_volume;
+  $('s-volume').value = s.volume;
+  $('s-bright_min').value = s.bright_min;
+  $('s-bright_max').value = s.bright_max;
+  $('s-ambient_period_s').value = s.ambient_period_s;
+  $('s-tz_offset_min').value = s.tz_offset_min;
+  $('s-clock_face').value = s.clock_face;
+  $('s-orientation').value = s.orientation;
+  $('s-voice_enabled').checked = !!s.voice_enabled;
+  $('s-voice_mic_gain').value = s.voice_mic_gain;
+  /* pre-v10 firmware has no wake tuning: show the old compiled-in values */
+  $('s-voice_wake_thr').value = s.voice_wake_thr === undefined ? 50 : s.voice_wake_thr;
+  $('s-voice_wake_verify').checked = s.voice_wake_verify === undefined ? false : !!s.voice_wake_verify;
+  $('s-voice_wake_collect').checked = s.voice_wake_collect === undefined ? false : !!s.voice_wake_collect;
+  /* wake word: options come from the firmware's embedded model list */
+  const ww = $('s-voice_wake_word');
+  ww.innerHTML = '';
+  for (const w of (s.voice_wake_words || [])) {
+    const o = document.createElement('option');
+    o.value = w.id; o.textContent = w.name;
+    ww.appendChild(o);
+  }
+  if (s.voice_wake_word) {
+    if (![...ww.options].some(o => o.value === s.voice_wake_word)) {
+      const o = document.createElement('option');
+      o.value = s.voice_wake_word; o.textContent = s.voice_wake_word + ' (not embedded)';
+      ww.appendChild(o);
+    }
+    ww.value = s.voice_wake_word;
+  }
+  setPollSelect(s.svc_poll_s === undefined ? 300 : s.svc_poll_s);
+  /* brightness slider baseline too (it maps to bright_max) */
+  if (!briDragging) { $('bri').value = s.bright_max; $('bri-val').textContent = s.bright_max; }
+}
+
+function formToSettings() {
+  const out = {};
+  for (let n = 1; n <= ALARM_N; n++) {
+    /* a cleared time input (desktop browsers allow it) keeps the stored time */
+    const v = $(`s-alarm${n}_time`).value;
+    const [hh, mm] = v ? v.split(':').map(Number)
+                       : [baseline[`alarm${n}_hh`], baseline[`alarm${n}_mm`]];
+    out[`alarm${n}_enabled`] = $(`s-alarm${n}_enabled`).checked;
+    out[`alarm${n}_hh`] = hh;
+    out[`alarm${n}_mm`] = mm;
+    out[`alarm${n}_days`] = getDays(n);
+  }
+  return Object.assign(out, {
+    max_alarm_seconds: Number($('s-max_alarm_seconds').value),
+    alarm_mode: Number($('s-alarm_mode').value),
+    alarm_volume: Number($('s-alarm_volume').value),
+    volume: Number($('s-volume').value),
+    bright_min: Number($('s-bright_min').value),
+    bright_max: Number($('s-bright_max').value),
+    ambient_period_s: Number($('s-ambient_period_s').value),
+    tz_offset_min: Number($('s-tz_offset_min').value),
+    clock_face: Number($('s-clock_face').value),
+    orientation: Number($('s-orientation').value),
+    voice_enabled: $('s-voice_enabled').checked,
+    voice_mic_gain: Number($('s-voice_mic_gain').value),
+    voice_wake_thr: Number($('s-voice_wake_thr').value),
+    voice_wake_verify: $('s-voice_wake_verify').checked,
+    voice_wake_collect: $('s-voice_wake_collect').checked,
+    svc_poll_s: Number($('s-svc_poll_s').value),
+  }, $('s-voice_wake_word').value ? { voice_wake_word: $('s-voice_wake_word').value } : {});
+}
+
+async function loadSettings() {
+  try {
+    const s = await api('/api/v1/settings');
+    baseline = s;
+    settingsToForm(s);
+  } catch (e) { /* toast already shown */ }
+}
+$('settings').addEventListener('toggle', () => {
+  if ($('settings').open && baseline === null) loadSettings();
+});
+$('btn-reload').addEventListener('click', loadSettings);
+$('btn-save').addEventListener('click', async () => {
+  if (baseline === null) return;
+  const now = formToSettings();
+  const patch = {};
+  for (const k of S_FIELDS) {
+    if (now[k] === undefined) continue; /* e.g. wake word with no options */
+    /* baseline booleans arrive as true/false; normalize both sides.
+     * Strings (voice_wake_word) compare as strings. */
+    let a, b;
+    if (typeof now[k] === 'boolean') { a = now[k]; b = !!baseline[k]; }
+    else if (typeof now[k] === 'string') { a = now[k]; b = String(baseline[k] ?? ''); }
+    else { a = Number(now[k]); b = Number(baseline[k]); }
+    if (a !== b) patch[k] = now[k];
+  }
+  if (Object.keys(patch).length === 0) { toast('No changes'); return; }
+  try {
+    const r = await api('/api/v1/settings', {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(patch),
+    });
+    if (r.settings) { baseline = r.settings; settingsToForm(r.settings); }
+    toast('Saved');
+    pollSoon();
+  } catch (e) { /* toast already shown */ }
+});
+
+/* ---------- event journal ---------- */
+function fmtEvent(e) {
+  let when;
+  if (e.t > 0) {
+    const d = new Date(e.t * 1000);
+    const p = n => String(n).padStart(2, '0');
+    when = `${p(d.getMonth() + 1)}-${p(d.getDate())} ${p(d.getHours())}:${p(d.getMinutes())}:${p(d.getSeconds())}`;
+  } else {
+    when = '+' + String(e.up).padStart(6, '0') + 's';
+  }
+  return `${when} ${e.code.padEnd(5)} ${e.text}`;
+}
+async function loadEvents() {
+  const box = $('events-body');
+  box.textContent = 'Loading…';
+  try {
+    const r = await api('/api/v1/events');
+    const items = r.items || [];
+    box.textContent = items.length ? items.map(fmtEvent).join('\n') : '(no events)';
+  } catch (e) { box.textContent = '(failed to load)'; }
+}
+/* The in-RAM device log (Specs page text): plain text, not JSON, so it
+ * bypasses api(). Newest lines last - scroll to the bottom. */
+async function loadDeviceLog() {
+  const box = $('events-body');
+  box.textContent = 'Loading…';
+  try {
+    const r = await fetch('/api/v1/log', {
+      headers: { 'X-Api-Key': localStorage.getItem('apiKey') || '' },
+      signal: AbortSignal.timeout(8000),
+    });
+    if (r.status === 401) { localStorage.removeItem('apiKey'); showKeyModal(); throw new Error('unauthorized'); }
+    if (!r.ok) throw new Error('HTTP ' + r.status);
+    const text = await r.text();
+    box.textContent = text.trim() ? text : '(log empty)';
+    box.scrollTop = box.scrollHeight;
+  } catch (e) { box.textContent = '(failed to load device log)'; }
+}
+$('events').addEventListener('toggle', () => { if ($('events').open) loadEvents(); });
+$('btn-events').addEventListener('click', loadEvents);
+$('btn-devlog').addEventListener('click', loadDeviceLog);
+
+/* ---------- boot ---------- */
+startPolling();
+</script>
+</body>
+</html>

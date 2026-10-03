@@ -1,0 +1,10 @@
+dependencies:
+  idf: ">=5.5.5"
+  espressif/esp_wifi_remote: "*"
+  # match the C6 slave firmware version (it reports 2.12.0; vHCI fails across a mismatch)
+  espressif/esp_hosted: "~2.12.0"
+  # 2.8+ needs the on_frame_buf_complete DPI callback, present since IDF 5.5.5
+  espressif/esp_lvgl_port: "~2.9.0"
+  lvgl/lvgl: "9.5.0"
+  # USB Audio Class host driver (Jabra speaker / dongle plugged into the OTG port)
+  espressif/usb_host_uac: "^1"

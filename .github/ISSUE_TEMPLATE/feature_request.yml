@@ -1,0 +1,61 @@
+name: Feature request
+description: Propose a change to the clock, the sample, the tooling or the documentation.
+title: "[feature] "
+labels: ["enhancement", "needs-triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Scope is in `CONTRIBUTING.md`: the two Guition ESP32-P4 boards, `bedside_clock`,
+        `sample_hello_world`, the tooling around them, and documentation. Requests that need an
+        internet service to boot, or a board without an ESP32-P4, are out of scope.
+  - type: dropdown
+    id: area
+    attributes:
+      label: Area
+      options:
+        - bedside_clock (app behaviour)
+        - bedside_clock HTTP API
+        - Voice and wake word
+        - sample_hello_world
+        - Board support (10.1" port, board profiles)
+        - Build, tooling, scripts
+        - Documentation
+        - Other
+    validations:
+      required: true
+  - type: textarea
+    id: problem
+    attributes:
+      label: The problem
+      description: What you cannot do today, or what is awkward. Describe the situation, not the solution.
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed change
+      description: What you would like to happen. If you have an API shape, a settings key, a UI placement or a config option in mind, write it down.
+    validations:
+      required: true
+  - type: textarea
+    id: constraints
+    attributes:
+      label: Hardware and reliability constraints you considered
+      description: Internal RAM (the board idles under 120 KB free), the LVGL-task rule (no feature work in callbacks), the C6 link, power. See `docs/reliability-checklist.md`.
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives
+      description: Other ways to get the same result, including "do it outside the device through the HTTP API".
+  - type: dropdown
+    id: help
+    attributes:
+      label: Can you work on it?
+      options:
+        - Yes, I can submit a pull request and test on hardware
+        - Yes, but I only have the 4.3" board
+        - Yes, but I only have the 10.1" board
+        - No, proposal only
+    validations:
+      required: true

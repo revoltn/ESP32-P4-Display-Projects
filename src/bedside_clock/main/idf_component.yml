@@ -1,0 +1,19 @@
+dependencies:
+  idf: ">=5.5.5"
+  espressif/esp_wifi_remote: "*"
+  # match the C6 slave firmware version (it reports 2.12.0; vHCI fails across a mismatch)
+  espressif/esp_hosted: "~2.12.0"
+  # esp_lvgl_port 2.9.0 and esp_codec_dev 1.5.11 are NOT listed here on purpose: both
+  # carry local patches and live in components/ (since 2026-10-03, see patches/README.md).
+  # The BSP manifest still requests them; the local copies override the registry ones.
+  lvgl/lvgl: "9.5.0"
+  # USB Audio Class host driver (Jabra speaker / dongle plugged into the OTG port)
+  espressif/usb_host_uac: "^1"
+  # On-device speech recognition: WakeNet9 "Hi ESP" + MultiNet7 EN commands
+  espressif/esp-sr: "^2.5.2"
+  # microWakeWord engine (main/wake_mww.cpp, CONFIG_BEDSIDE_WAKE_MWW): TFLite
+  # Micro + ESP-NN PIE kernels, and the TF microfrontend feature generator
+  # (Apache-2.0; the frontend is no longer bundled in esp-tflite-micro >= 1.4).
+  # Linked in only when referenced, so the default build does not grow.
+  espressif/esp-tflite-micro: "^1.3.7"
+  esphome/esp-micro-speech-features: "^1.2.3"
